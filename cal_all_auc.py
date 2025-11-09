@@ -5,25 +5,37 @@ import json
 import glob
 # 假设您之前定义的解析函数在这里可用
 from cal_auc import parse_and_calculate_aucs_from_file
-
+# 在脚本最上面加一行开关
+ENABLE_CACHE = True   # ← 改这里就行！True=加速神器，False=强制重算一切
 # --- 关键常量定义 (已修改) ---
 # 需要从 overall_auc_info 中提取的统计指标
 STAT_METRICS = ['mean', 'std', 'max', 'min', 'range']
 # 对应：总体AUC, 学生平均AUC, 学生AUC标准差, 学生AUC最大值, 学生AUC最小值, 学生AUC极差
 FINAL_BASELINE_COLUMNS = [
-    'overall_dataset_auc', # 五折均值
-    'overall_dataset_auc_std', # 五折标准差 (新增)
+    'overall_dataset_auc',
+    'overall_dataset_auc_std',
     'student_auc_mean',
-    'student_auc_mean_std', # 新增
+    'student_auc_mean_std',
     'student_auc_std',
-    'student_auc_std_std', # 新增
+    'student_auc_std_std',
     'student_auc_max',
-    'student_auc_max_std', # 新增
+    'student_auc_max_std',
     'student_auc_min',
-    'student_auc_min_std', # 新增
+    'student_auc_min_std',
     'student_auc_range',
-    'student_auc_range_std', # 新增
-    'unfairness_metric' # 不公平性指标 (不计算五折 std)
+    'student_auc_range_std',
+    'unfairness_metric',
+    # === 新增指标 ===
+    'average_auc',
+    'average_auc_std',
+    'gini_coefficient',
+    'gini_coefficient_std',
+    'eawi_alpha_10',
+    'eawi_alpha_10_std',
+    'eawi_alpha_20',
+    'eawi_alpha_20_std',
+    'eawi_alpha_30',
+    'eawi_alpha_30_std'
 ]
 # 用于解析文件夹名称的特殊数据集名称
 SPECIAL_DATASET = 'nips_task34'
@@ -50,6 +62,8 @@ def calculate_unfairness(mean, auc_range, std):
     if denominator == 0 or np.isnan(denominator) or np.isclose(denominator, 0): # 添加 np.isclose 检查
         return np.nan # 或返回一个特定的标记值
     return mean / denominator
+
+
 
 # --- 辅助函数：将 overall_auc_info 展平 (保持不变) ---
 def flatten_overall_info(info):
@@ -136,7 +150,7 @@ def analyze_all_results(root_directory='.'):
             # ----------------------------------------------------
             # 🔥 增量缓存检查：检查是否已存在最终统计文件 (已修改缓存加载逻辑以匹配新列)
             # ----------------------------------------------------
-            if os.path.exists(output_csv_path) and os.path.exists(output_txt_path):
+            if ENABLE_CACHE and os.path.exists(output_csv_path) and os.path.exists(output_txt_path):
                 print(f"✅ CACHE HIT: Found results for {dataset_name}/{model_name}. Loading...")
                 
                 try:
@@ -156,21 +170,47 @@ def analyze_all_results(root_directory='.'):
                     baseline_entry = {
                         'Dataset': dataset_name,
                         'Model': model_name,
+
+                        # 老指标
                         'overall_dataset_auc': final_stats.get('overall_dataset_auc_mean', np.nan),
-                        'overall_dataset_auc_std': final_stats.get('overall_dataset_auc_std', np.nan), # 新增
-                        'student_auc_mean': mean_auc,
-                        'student_auc_mean_std': final_stats.get('student_auc_mean_std', np.nan), # 新增
-                        'student_auc_std': mean_std,
-                        'student_auc_std_std': final_stats.get('student_auc_std_std', np.nan), # 新增
+                        'overall_dataset_auc_std': final_stats.get('overall_dataset_auc_std', np.nan),
+
+                        'student_auc_mean': final_stats.get('student_auc_mean_mean', np.nan),
+                        'student_auc_mean_std': final_stats.get('student_auc_mean_std', np.nan),
+
+                        'student_auc_std': final_stats.get('student_auc_std_mean', np.nan),
+                        'student_auc_std_std': final_stats.get('student_auc_std_std', np.nan),
+
                         'student_auc_max': final_stats.get('student_auc_max_mean', np.nan),
-                        'student_auc_max_std': final_stats.get('student_auc_max_std', np.nan), # 新增
+                        'student_auc_max_std': final_stats.get('student_auc_max_std', np.nan),
+
                         'student_auc_min': final_stats.get('student_auc_min_mean', np.nan),
-                        'student_auc_min_std': final_stats.get('student_auc_min_std', np.nan), # 新增
-                        'student_auc_range': mean_range,
-                        'student_auc_range_std': final_stats.get('student_auc_range_std', np.nan), # 新增
-                        # 确保不公平性指标是从缓存文件读取或重新计算的
-                        'unfairness_metric': final_stats.get('unfairness_metric_mean') if 'unfairness_metric_mean' in final_stats else calculate_unfairness(mean_auc, mean_range, mean_std),
-                        # 假设成功解析的折数等于 CSV 的行数 (如果 CSV 不为空)
+                        'student_auc_min_std': final_stats.get('student_auc_min_std', np.nan),
+
+                        'student_auc_range': final_stats.get('student_auc_range_mean', np.nan),
+                        'student_auc_range_std': final_stats.get('student_auc_range_std', np.nan),
+
+                        # === 新指标：必须在这里也填！===
+                        'average_auc': final_stats.get('student_auc_average_auc_mean', np.nan),
+                        'average_auc_std': final_stats.get('student_auc_average_auc_std', np.nan),
+
+                        'gini_coefficient': final_stats.get('student_auc_gini_coefficient_mean', np.nan),
+                        'gini_coefficient_std': final_stats.get('student_auc_gini_coefficient_std', np.nan),
+
+                        'eawi_alpha_10': final_stats.get('student_auc_eawi_alpha_10_mean', np.nan),
+                        'eawi_alpha_10_std': final_stats.get('student_auc_eawi_alpha_10_std', np.nan),
+
+                        'eawi_alpha_20': final_stats.get('student_auc_eawi_alpha_20_mean', np.nan),
+                        'eawi_alpha_20_std': final_stats.get('student_auc_eawi_alpha_20_std', np.nan),
+
+                        'eawi_alpha_30': final_stats.get('student_auc_eawi_alpha_30_mean', np.nan),
+                        'eawi_alpha_30_std': final_stats.get('student_auc_eawi_alpha_30_std', np.nan),
+
+                        # 不公平性
+                        'unfairness_metric': final_stats.get('unfairness_metric_mean') 
+                                           if 'unfairness_metric_mean' in final_stats 
+                                           else calculate_unfairness(mean_auc, mean_range, mean_std),
+
                         'Folds_Present': ','.join(map(str, range(len(df_folds)))) if not df_folds.empty else 'N/A'
                     }
                     final_baseline_data.append(baseline_entry)
@@ -279,13 +319,50 @@ def analyze_all_results(root_directory='.'):
                 # 假设只有一个txt文件
                 txt_file_path = txt_files[0]
                 
-                try:
-                    # 使用之前定义的解析函数
-                    _, overall_info = parse_and_calculate_aucs_from_file(txt_file_path)
+                json_cache_path = txt_file_path.replace('.txt', '_per_student_aucs.json')
+                if ENABLE_CACHE and os.path.exists(json_cache_path):
+                    print(f"  CACHE HIT: Loading pre-computed student AUCs from {os.path.basename(json_cache_path)}")
+                    try:
+                        with open(json_cache_path, 'r', encoding='utf-8') as f:
+                            student_aucs_dict = json.load(f)
+                        
+                        # 构造一个假的 overall_info（只保留我们需要的）
+                        dummy_stats = {
+                            'mean': np.mean(list(student_aucs_dict.values())),
+                            'std': np.std(list(student_aucs_dict.values())),
+                            'max': np.max(list(student_aucs_dict.values())),
+                            'min': np.min(list(student_aucs_dict.values())),
+                            'range': np.max(list(student_aucs_dict.values())) - np.min(list(student_aucs_dict.values())),
+                            'gini_coefficient': gini_coefficient(list(student_aucs_dict.values())),
+                            'average_auc': np.mean(list(student_aucs_dict.values())),
+                        }
+                        # 加入 EAWI
+                        _, _, eawi_dict = calculate_wealth_metrics(list(student_aucs_dict.values()))
+                        dummy_stats.update(eawi_dict)
+
+                        dummy_overall_info = {
+                            'overall_dataset_auc': 0.5,  # 我们不关心这个，可以后续从CSV覆盖
+                            'student_auc_stats': dummy_stats
+                        }
+                        
+                        fold_results.append(flatten_overall_info(dummy_overall_info))
+                        successful_folds.append(fold_id)
+                        print(f"  Successfully reused cached student AUCs for fold {fold_id}")
+                        continue  # 跳过 parse_and_calculate_aucs_from_file！
                     
-                    # 展平结果并存储
+                    except Exception as e:
+                        print(f"  Failed to load JSON cache: {e}. Will recompute...")
+
+                # === 原有逻辑：如果没有缓存，才重新计算 ===
+                try:
+                    _, overall_info = parse_and_calculate_aucs_from_file(txt_file_path)
                     fold_results.append(flatten_overall_info(overall_info))
                     successful_folds.append(fold_id)
+                except Exception as e:
+                    log_missing_file(
+                        f"ERROR: Failed to parse and calculate AUC for {txt_file_path}. Error: {e}",
+                        root_dir=root_directory
+                    )
                     
                 except Exception as e:
                     log_missing_file(
@@ -349,32 +426,43 @@ def analyze_all_results(root_directory='.'):
                 'Dataset': dataset_name,
                 'Model': model_name,
                 
-                # Overall AUC: Mean & STD
-                'overall_dataset_auc': df_stats['overall_dataset_auc_mean'].iloc[0],
-                'overall_dataset_auc_std': df_stats['overall_dataset_auc_std'].iloc[0], # 提取五折 std
+                # === 原有指标（保持不动）===
+                'overall_dataset_auc': df_stats.get('overall_dataset_auc_mean', np.nan),
+                'overall_dataset_auc_std': df_stats.get('overall_dataset_auc_std', np.nan),
                 
-                # Student AUC Mean: Mean & STD
-                'student_auc_mean': df_stats['student_auc_mean_mean'].iloc[0],
-                'student_auc_mean_std': df_stats['student_auc_mean_std'].iloc[0], # 提取五折 std
+                'student_auc_mean': df_stats.get('student_auc_mean_mean', np.nan),
+                'student_auc_mean_std': df_stats.get('student_auc_mean_std', np.nan),
                 
-                # Student AUC STD: Mean & STD
-                'student_auc_std': df_stats['student_auc_std_mean'].iloc[0],
-                'student_auc_std_std': df_stats['student_auc_std_std'].iloc[0], # 提取五折 std
+                'student_auc_std': df_stats.get('student_auc_std_mean', np.nan),
+                'student_auc_std_std': df_stats.get('student_auc_std_std', np.nan),
                 
-                # Student AUC Max: Mean & STD
-                'student_auc_max': df_stats['student_auc_max_mean'].iloc[0],
-                'student_auc_max_std': df_stats['student_auc_max_std'].iloc[0], # 提取五折 std
+                'student_auc_max': df_stats.get('student_auc_max_mean', np.nan),
+                'student_auc_max_std': df_stats.get('student_auc_max_std', np.nan),
                 
-                # Student AUC Min: Mean & STD
-                'student_auc_min': df_stats['student_auc_min_mean'].iloc[0],
-                'student_auc_min_std': df_stats['student_auc_min_std'].iloc[0], # 提取五折 std
+                'student_auc_min': df_stats.get('student_auc_min_mean', np.nan),
+                'student_auc_min_std': df_stats.get('student_auc_min_std', np.nan),
                 
-                # Student AUC Range: Mean & STD
-                'student_auc_range': df_stats['student_auc_range_mean'].iloc[0],
-                'student_auc_range_std': df_stats['student_auc_range_std'].iloc[0], # 提取五折 std
+                'student_auc_range': df_stats.get('student_auc_range_mean', np.nan),
+                'student_auc_range_std': df_stats.get('student_auc_range_std', np.nan),
                 
-                # Unfairness Metric (仅保留均值)
-                'unfairness_metric': unfairness_mean, 
+                # === 新增指标：自动映射（最优雅！）===
+                'average_auc': df_stats.get('student_auc_average_auc_mean', np.nan),
+                'average_auc_std': df_stats.get('student_auc_average_auc_std', np.nan),
+                
+                'gini_coefficient': df_stats.get('student_auc_gini_coefficient_mean', np.nan),
+                'gini_coefficient_std': df_stats.get('student_auc_gini_coefficient_std', np.nan),
+                
+                'eawi_alpha_10': df_stats.get('student_auc_eawi_alpha_10_mean', np.nan),
+                'eawi_alpha_10_std': df_stats.get('student_auc_eawi_alpha_10_std', np.nan),
+                
+                'eawi_alpha_20': df_stats.get('student_auc_eawi_alpha_20_mean', np.nan),
+                'eawi_alpha_20_std': df_stats.get('student_auc_eawi_alpha_20_std', np.nan),
+                
+                'eawi_alpha_30': df_stats.get('student_auc_eawi_alpha_30_mean', np.nan),
+                'eawi_alpha_30_std': df_stats.get('student_auc_eawi_alpha_30_std', np.nan),
+                
+                # === 不公平性指标 ===
+                'unfairness_metric': unfairness_mean,
                 
                 'Folds_Present': ','.join(map(str, sorted(successful_folds)))
             }

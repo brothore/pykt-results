@@ -3,6 +3,59 @@ import numpy as np
 import json
 from sklearn.metrics import roc_auc_score
 
+ENABLE_SLIDING_WINDOW = True
+
+def calculate_wealth_metrics(wealth_list, alphas=[1.0, 2.0, 3.0]):
+    """
+    计算平均财富、基尼系数、以及多个 alpha 下的 EAWI 指标。
+    EAWI_alpha = average_wealth * (1 - G) ** alpha
+    """
+    if not wealth_list or len(wealth_list) == 0:
+        avg = 0.0
+        G = 0.0
+        eawi_dict = {f'eawi_alpha_{a}': 0.0 for a in alphas}
+        return avg, G, eawi_dict
+
+    wealth = np.array(wealth_list)
+    n = len(wealth)
+    W = float(np.sum(wealth))
+    average_wealth = W / n
+
+    G = gini_coefficient(wealth_list)  # 复用你写好的函数
+
+    eawi_dict = {}
+    for alpha in alphas:
+        eawi = average_wealth * ((1 - G) ** alpha)
+        eawi_dict[f'eawi_alpha_{alpha:.1f}'.replace('.', '')] = float(eawi)
+        # 结果键名：eawi_alpha_10, eawi_alpha_20, eawi_alpha_30
+
+    return average_wealth, G, eawi_dict
+
+def gini_coefficient(wealth):
+    """
+    独立的函数，用于计算基尼系数 (Gini Coefficient)。
+   
+    参数:
+    wealth (list or array-like): 财富列表，每个元素代表一个个体的财富。
+   
+    返回:
+    float: 基尼系数 (0 到 1 之间)。
+    """
+    if len(wealth) == 0:
+        return 0.0
+    wealth = np.array(wealth)
+    if np.all(wealth == 0):
+        return 0.0
+    # 确保财富非负（基尼系数假设非负值）
+    if np.any(wealth < 0):
+        raise ValueError("财富值不能为负数")
+    sorted_wealth = np.sort(wealth)
+    n = len(wealth)
+    index = np.arange(1, n + 1)
+    # 标准基尼系数公式
+    numerator = np.sum((2 * index - n - 1) * sorted_wealth)
+    denominator = n * np.sum(sorted_wealth)
+    return numerator / denominator
 def safe_roc_auc(y_true, y_score, dummy_score_strategy='mean'):
     """
     计算 AUC，处理单一类别情况通过添加虚拟数据点。
@@ -105,28 +158,45 @@ def parse_and_calculate_aucs_from_file(file_path):
 
     # 分组处理每个学生
     for student_uid, group in data.groupby('orirow'):
-        # 学生的完整序列
         student_trues_long = group['late_trues'].values
         student_scores_long = group['late_mean'].values
-        
-        # *** 滑窗并汇集数据点 ***
-        collected_trues, collected_scores = sliding_window_collect(
-            student_trues_long, 
-            student_scores_long, 
-            window_size=200
-        )
-        
-        # *** 关键修改：将当前学生的滑窗汇集结果加入到整体列表中 ***
+
+        # === 根据开关选择：滑窗 or 整序列 ===
+        if ENABLE_SLIDING_WINDOW:
+            collected_trues, collected_scores = sliding_window_collect(
+                student_trues_long, 
+                student_scores_long, 
+                window_size=WINDOW_SIZE
+            )
+            print(f"  [滑窗模式] 学生 {student_uid}: {len(student_trues_long)} → {len(collected_trues)} 个点")
+        else:
+            collected_trues = student_trues_long.tolist()
+            collected_scores = student_scores_long.tolist()
+            print(f"  [整序列模式] 学生 {student_uid}: {len(collected_trues)} 个点")
+        # ======================================
+
+        # 加入整体汇集（用于 overall_auc）
         all_window_trues_flat.extend(collected_trues)
         all_window_scores_flat.extend(collected_scores)
 
-        # 计算【单个学生】的滑窗汇集 AUC (保持原有逻辑)
+        # 计算单个学生AUC
         if len(np.unique(collected_trues)) >= 2 and len(collected_trues) > 0:
             student_final_auc = safe_roc_auc(collected_trues, collected_scores)
         else:
             student_final_auc = 0.5
 
         student_aucs[student_uid] = student_final_auc
+
+    # === 新增：自动保存 per_student_aucs.json 到 txt 同目录 ===
+    mode_suffix = "" if ENABLE_SLIDING_WINDOW else "_no_window"
+    json_output_path = file_path.replace('.txt', f'_per_student_aucs{mode_suffix}.json')
+    # 转为普通 dict（避免 pandas Int64 问题）
+    student_aucs_plain = {str(k): float(v) for k, v in student_aucs.items()}
+    with open(json_output_path, 'w', encoding='utf-8') as f:
+        json.dump(student_aucs_plain, f, indent=2, ensure_ascii=False)
+    print(f"已保存每个学生AUC → {json_output_path}")
+    # ===========================================================
+
 
     # 4. 组装学生AUC DataFrame
     student_auc_df = pd.DataFrame(
@@ -162,7 +232,18 @@ def parse_and_calculate_aucs_from_file(file_path):
             'min': min_auc, 
             'range': range_auc
         }
+        # === 新增：在返回前计算基尼系数和 EAWI ===
+        valid_aucs_list = valid_aucs.tolist()  # 用于计算财富不平等指标
 
+        average_wealth, gini, eawi_dict = calculate_wealth_metrics(valid_aucs_list, alphas=[1.0, 2.0, 3.0])
+
+        # 更新 stats，加入新指标
+        stats.update({
+            'gini_coefficient': float(gini),
+            'average_auc': float(average_wealth),  # 等价于 mean，但更清晰
+            **eawi_dict  # 自动展开 eawi_alpha_10, eawi_alpha_20, eawi_alpha_30
+        })
+        # ===========================================
     # 6. 整合结果字典
     overall_auc_info = {
         'overall_dataset_auc': overall_auc, # <-- 现在是基于所有滑窗汇集数据计算的

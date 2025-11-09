@@ -1,0 +1,193 @@
+Skipping .git/branches: No successful folds found.
+Skipping .git/hooks: No successful folds found.
+Skipping .git/info: No successful folds found.
+Skipping: Could not reliably parse fold ID from folder name: heads in ./.git/refs
+Skipping: Could not reliably parse fold ID from folder name: tags in ./.git/refs
+Skipping: Could not reliably parse fold ID from folder name: remotes in ./.git/refs
+Skipping .git/refs: No successful folds found.
+Skipping: Could not reliably parse fold ID from folder name: pack in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: info in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: 2f in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: b4 in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: c9 in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: fc in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: 81 in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: 3e in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: 98 in ./.git/objects
+Skipping: Could not reliably parse fold ID from folder name: 33 in ./.git/objects
+Skipping .git/objects: No successful folds found.
+Skipping: Could not reliably parse fold ID from folder name: refs in ./.git/logs
+Skipping .git/logs: No successful folds found.
+MISSING FILE: No TXT file found in ./algebra2005/bakt_time/bakt_tiaocan_algebra2005_42_0_0.1_256_256_2_4_0.5_0.5_0.5_50_256_256_4_2_0.0001_1_1_a1f2b23b-50de-44bf-ac1d-5b92a7da48d1. Expected fold: 0
+Skipping algebra2005/bakt_time: No successful folds found.
+MISSING FILE: No TXT file found in ./algebra2005/iekt/iekt_tiaocan_algebra2005_0.001_3407_0_0.5_256_30_1_20_20_0.8_1_1_c823ef19-a23b-425c-bc7b-874032deb0c0_0. Expected fold: 3407
+MISSING FILE: No TXT file found in ./algebra2005/iekt/iekt_tiaocan_algebra2005_0.001_3407_1_0.3_256_50_1_20_10_0.8_1_1_4a5058bb-ecc0-4143-9eb8-dc3f034e98a4_1. Expected fold: 3407
+MISSING FILE: No TXT file found in ./algebra2005/iekt/iekt_tiaocan_algebra2005_0.001_3407_2_0.1_256_30_1_10_30_0.4_1_1_c8d4b3a7-cc42-411a-bd99-4508a8802159_2. Expected fold: 3407
+MISSING FILE: No TXT file found in ./algebra2005/iekt/iekt_tiaocan_algebra2005_0.001_3407_3_0.1_256_30_1_20_10_0.6_1_1_2871e3cf-e1b5-48bb-9595-95fb346d3525_3. Expected fold: 3407
+MISSING FILE: No TXT file found in ./algebra2005/iekt/iekt_tiaocan_algebra2005_0.001_42_4_0.3_256_50_1_10_30_0.8_1_1_3bee1ddb-3f44-453b-acd3-fed5f148144a_4. Expected fold: 42
+Skipping algebra2005/iekt: No successful folds found.
+MISSING FILE: No TXT file found in ./algebra2005/lpkt/lpkt_tiaocan_algebra2005_3407_0_0.001_0.05_64_16_64_0.03_1_1_8997332b-e476-4f1d-8a23-f122e22c3a5b. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/lpkt/lpkt_tiaocan_algebra2005_3407_1_0.001_0.1_64_16_64_0.03_1_1_17eb7fea-f5a5-4d05-8478-6ae8516d6ef3. Expected fold: 1
+MISSING FILE: No TXT file found in ./algebra2005/lpkt/lpkt_tiaocan_algebra2005_3407_2_0.001_0.5_16_16_64_0.05_1_1_25484fed-ff03-4609-802a-56e56e6a36ff. Expected fold: 2
+MISSING FILE: No TXT file found in ./algebra2005/lpkt/lpkt_tiaocan_algebra2005_3407_4_0.001_0.1_16_64_64_0.03_1_1_8082320d-ec11-4956-bc03-66222f8935bd. Expected fold: 4
+MISSING FILE: No TXT file found in ./algebra2005/lpkt/lpkt_tiaocan_algebra2005_42_3_0.001_0.05_16_16_64_0.05_1_1_d7fe5e5b-f7fb-457e-928d-976ec5b663e4. Expected fold: 3
+Skipping algebra2005/lpkt: No successful folds found.
+MISSING FILE: No TXT file found in ./algebra2005/lpkt_old/lpkt_tiaocan_algebra2005_3407_3_0.001_0.1_16_16_64_0.1_1_1_d1be0974-d100-43e0-92cb-5f8c546aa7a5. Expected fold: 3
+MISSING FILE: No TXT file found in ./algebra2005/lpkt_old/lpkt_tiaocan_algebra2005_3407_4_0.001_0.1_16_64_64_0.03_1_1_b76e1b8c-9fa4-4b73-aa8b-f2c8cc44242e. Expected fold: 4
+MISSING FILE: No TXT file found in ./algebra2005/lpkt_old/lpkt_tiaocan_algebra2005_42_0_0.001_0.5_64_16_64_0.03_1_1_3064026c-38bf-49b0-923a-1303b258946d. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/lpkt_old/lpkt_tiaocan_algebra2005_42_1_0.001_0.05_64_64_64_0.01_1_1_85e0edb6-0ca8-424b-810c-9d7231596c67. Expected fold: 1
+MISSING FILE: No TXT file found in ./algebra2005/lpkt_old/lpkt_tiaocan_algebra2005_42_2_0.001_0.3_64_16_64_0.03_1_1_215499d3-160c-4c5b-b4e9-e3b4aaf8bbb4. Expected fold: 2
+Skipping algebra2005/lpkt_old: No successful folds found.
+MISSING FILE: No TXT file found in ./algebra2005/moekt/moekt_0.0001_3407_1_0.1_0.3_0.3_2_256_0.5_0.001_0.3_512_128_3_1_2_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/moekt/moekt_0.0001_3407_2_0.3_0.3_0.3_7_256_0.8_0.01_0.4_512_32_7_1_8_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/moekt/moekt_0.001_3407_3_0.4_0.3_0.3_1_256_0.9_0.0001_0.4_512_128_3_1_2_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/moekt/moekt_0.001_42_0_0.3_0.3_0.3_5_256_0.7_0.01_0.5_512_64_7_1_4_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/moekt/moekt_0.001_42_4_0.2_0.3_0.3_2_256_0.9_0.01_0.2_512_32_7_1_8_0_0. Expected fold: 0
+Skipping algebra2005/moekt: No successful folds found.
+MISSING FILE: No TXT file found in ./algebra2005/qdkt/qdkt_tiaocan_algebra2005_3407_1_0.5_256_0.001_32_200_1_1_cc5e220c-20ab-40ba-8586-365b83b819a2_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./algebra2005/qdkt/qdkt_tiaocan_algebra2005_3407_2_0.5_64_0.001_32_200_1_1_cac30fda-736f-49d5-9f78-72df018a3ddb_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./algebra2005/qdkt/qdkt_tiaocan_algebra2005_3407_3_0.5_256_0.001_32_200_1_1_a5e21c9f-8979-4491-ae6e-1482f6d9e7f7_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./algebra2005/qdkt/qdkt_tiaocan_algebra2005_42_0_0.5_256_0.001_32_200_1_1_ff6fd8a9-e3b2-4417-b66a-672134031787_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./algebra2005/qdkt/qdkt_tiaocan_algebra2005_42_4_0.5_64_0.001_32_200_1_1_a1b2cd5c-7abc-4d2f-a162-3866d47c585e_4. Expected fold: 4
+Skipping algebra2005/qdkt: No successful folds found.
+Skipping: Could not reliably parse fold ID from folder name: assist2009_simplekt_qid_saved_model_3407_3_0.3_256_64_2_4_0.5_0.5_0.5_50_256_256_4_4_0.001_0_1 in ./assist2009/simplekt
+Skipping: Could not reliably parse fold ID from folder name: assist2009_simplekt_qid_saved_model_42_0_0.1_256_256_2_4_0.5_0.5_0.5_50_256_64_4_4_0.001_0_1 in ./assist2009/simplekt
+Skipping: Could not reliably parse fold ID from folder name: assist2009_simplekt_qid_saved_model_42_1_0.3_64_64_2_4_0.5_0.5_0.5_50_256_256_4_4_0.001_0_1 in ./assist2009/simplekt
+Skipping: Could not reliably parse fold ID from folder name: assist2009_simplekt_qid_saved_model_42_2_0.3_64_64_2_4_0.5_0.5_0.5_50_256_256_4_4_0.001_0_1 in ./assist2009/simplekt
+Skipping: Could not reliably parse fold ID from folder name: assist2009_simplekt_qid_saved_model_42_4_0.1_256_64_2_4_0.5_0.5_0.5_50_256_64_4_4_0.001_0_1 in ./assist2009/simplekt
+Skipping assist2009/simplekt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2009/iekt/iekt_tiaocan_assist2009_0.001_3407_0_0.3_256_50_1_30_20_0.6_1_1_d7cb9bd4-4fa6-4207-8791-791d838f25fa_0. Expected fold: 3407
+MISSING FILE: No TXT file found in ./assist2009/iekt/iekt_tiaocan_assist2009_0.001_3407_1_0.05_256_40_1_10_20_0.4_1_1_45486699-21cf-40f4-9783-b1a0fe81138d_1. Expected fold: 3407
+MISSING FILE: No TXT file found in ./assist2009/iekt/iekt_tiaocan_assist2009_0.001_3407_3_0.05_256_30_1_30_20_0.4_1_1_93a8878f-7133-48bb-a6a4-e9ab9b8650f9_3. Expected fold: 3407
+MISSING FILE: No TXT file found in ./assist2009/iekt/iekt_tiaocan_assist2009_0.001_3407_4_0.1_256_40_1_30_10_0.4_1_1_5c3c3aed-e79e-4608-b524-475cb996974e_4. Expected fold: 3407
+MISSING FILE: No TXT file found in ./assist2009/iekt/iekt_tiaocan_assist2009_0.001_42_2_0.05_256_50_1_10_20_0.6_1_1_8697ce0f-2fd8-4644-8dbb-cd841e87ea04_2. Expected fold: 42
+Skipping assist2009/iekt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2009/lpkt/lpkt_tiaocan_assist2009_3407_1_0.001_0.05_16_16_64_0.05_1_1_c387aca0-d3a2-433e-bfcd-ed2cff50c8c6. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2009/lpkt/lpkt_tiaocan_assist2009_3407_3_0.001_0.05_16_16_64_0.1_1_1_763baff9-cedf-4935-83b4-e33b44fbb2f4. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2009/lpkt/lpkt_tiaocan_assist2009_3407_4_0.001_0.1_16_16_64_0.05_1_1_491125f4-babb-4668-9015-ee2f6a2409d9. Expected fold: 4
+MISSING FILE: No TXT file found in ./assist2009/lpkt/lpkt_tiaocan_assist2009_42_0_0.001_0.3_64_16_64_0.07_1_1_db416208-91ce-493e-9e2a-6fb04e69cf56. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/lpkt/lpkt_tiaocan_assist2009_42_2_0.001_0.3_64_16_64_0.07_1_1_218ba1a3-9dc7-4833-ae4f-fb92219b1c15. Expected fold: 2
+Skipping assist2009/lpkt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2009/lpkt_old/lpkt_tiaocan_assist2009_3407_1_0.001_0.1_16_16_64_0.05_1_1_fddaa86c-f6e6-4026-8450-21ba21d398d3. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2009/lpkt_old/lpkt_tiaocan_assist2009_3407_3_0.001_0.1_16_16_64_0.07_1_1_65e12954-6c98-427d-a384-27d90cd6c1cd. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2009/lpkt_old/lpkt_tiaocan_assist2009_3407_4_0.001_0.1_16_16_64_0.05_1_1_71ed54ab-db15-4dc4-9198-898569eca06b. Expected fold: 4
+MISSING FILE: No TXT file found in ./assist2009/lpkt_old/lpkt_tiaocan_assist2009_42_0_0.001_0.5_64_16_64_0.07_1_1_2f45633d-c15f-4276-89b7-b25066fd1beb. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/lpkt_old/lpkt_tiaocan_assist2009_42_2_0.001_0.05_64_16_64_0.1_1_1_6836618c-e11d-49c8-be4b-cf68c2720628. Expected fold: 2
+Skipping assist2009/lpkt_old: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2009/moekt/moekt_0.0001_3407_0_0.5_0.3_0.3_1_256_0.8_0.01_0.4_512_128_5_1_8_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/moekt/moekt_0.0001_3407_2_0.4_0.3_0.3_4_256_0.9_0.0001_0.1_512_128_3_1_4_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/moekt/moekt_0.0001_3407_4_0.3_0.3_0.3_5_256_0.8_0.002_0.3_512_128_7_1_2_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/moekt/moekt_0.001_3407_1_0.4_0.3_0.3_3_256_0.8_0.01_0.05_512_128_3_1_8_0_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/moekt/moekt_0.001_42_3_0.4_0.3_0.3_4_256_0.8_0.002_0.1_512_64_11_1_8_0_0. Expected fold: 0
+Skipping assist2009/moekt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2009/qdkt/qdkt_tiaocan_assist2009_3407_1_0.05_256_0.001_64_200_1_1_42aa4854-1f16-4b1a-b6b4-8c69a23690bb_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2009/qdkt/qdkt_tiaocan_assist2009_42_0_0.5_256_0.001_64_200_1_1_fe164203-1eb4-4a16-8564-9784d4f5ec3e_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2009/qdkt/qdkt_tiaocan_assist2009_42_2_0.5_256_0.001_64_200_1_1_bebafc20-13aa-4240-bc1b-695218f519f8_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2009/qdkt/qdkt_tiaocan_assist2009_42_3_0.05_256_0.001_64_200_1_1_f2d41331-c31f-4bc3-9df4-73a89f58771c_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2009/qdkt/qdkt_tiaocan_assist2009_42_4_0.1_256_0.001_64_200_1_1_db7ad89b-92c2-4de6-ac31-8330337baf4e_4. Expected fold: 4
+Skipping assist2009/qdkt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/akt/akt_tiaocan_assist2015_3407_2_0.1_64_64_8_4_0.0001_1_1_903f5ae5-a45b-4557-96a6-2ec27c53c479_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/akt/akt_tiaocan_assist2015_3407_3_0.05_256_256_8_4_1e-05_1_1_fbc38655-f0c2-4c3b-b431-4c7144a105c9_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/akt/akt_tiaocan_assist2015_42_0_0.05_256_256_8_4_1e-05_1_1_ac626223-de83-442b-bec2-cecf779b8563_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/akt/akt_tiaocan_assist2015_42_1_0.05_64_64_4_4_0.0001_1_1_a25719c9-4115-4b63-8f91-43693006c633_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/akt/akt_tiaocan_assist2015_42_4_0.05_256_256_8_4_1e-05_1_1_f7d3540d-f0a9-4077-9fbe-ff664363dfda_4. Expected fold: 4
+Skipping assist2015/akt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/atkt/atkt_tiaocan_assist2015_3407_1_0.05_64_64_256_256_15_2.0_0.0001_1_1_9705fc68-70a6-4054-8b07-6301323a5b52_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/atkt/atkt_tiaocan_assist2015_3407_4_0.05_64_256_256_256_15_2.0_0.001_1_1_e175b045-7651-43d7-913a-6a433a8959d5_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./assist2015/atkt/atkt_tiaocan_assist2015_42_0_0.05_64_256_256_64_12_2.0_0.001_1_1_bf535752-229d-4c98-80bb-adf5568df839_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/atkt/atkt_tiaocan_assist2015_42_2_0.05_64_256_256_256_12_2.0_0.001_1_1_9fddaa90-766c-43f7-927e-f0775a7e150f_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/atkt/atkt_tiaocan_assist2015_42_3_0.05_64_256_256_256_10_2.0_0.001_1_1_237ad0ce-85dd-4312-8c3a-12a6a7f198a9_3. Expected fold: 3
+Skipping assist2015/atkt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/atktfix/atktfix_tiaocan_assist2015_3407_2_0.5_64_64_256_64_15_0.2_0.001_1_1_a4a5099d-72bd-4892-a1e7-908a99e66a75_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/atktfix/atktfix_tiaocan_assist2015_3407_3_0.5_256_64_256_256_12_1.0_0.0001_1_1_30bbac7b-09a0-4f2e-922c-74479a02766e_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/atktfix/atktfix_tiaocan_assist2015_42_0_0.5_64_64_256_256_12_0.5_0.001_1_1_b2285909-a432-466b-bdb6-b623d1e2491c_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/atktfix/atktfix_tiaocan_assist2015_42_1_0.5_64_256_256_64_15_0.2_0.001_1_1_dafa818b-3e4f-437d-a97e-a78e67490872_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/atktfix/atktfix_tiaocan_assist2015_42_4_0.5_64_64_256_256_5_2.0_0.001_1_1_67bc2678-329c-45ee-b21a-87ea31d519b2_4. Expected fold: 4
+Skipping assist2015/atktfix: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/bakt/bakt_tiaocan_assist2015_3407_2_0.05_256_256_2_4_0.5_0.5_0.5_50_256_256_4_4_1e-05_1_1_67399a04-6970-4f7c-a0cb-b3b5227f1294. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/bakt/bakt_tiaocan_assist2015_3407_3_0.1_256_256_2_4_0.5_0.5_0.5_50_256_256_8_4_0.0001_1_1_b40eb46d-f3ae-476b-93eb-3973d07c3ace. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/bakt/bakt_tiaocan_assist2015_3407_4_0.1_256_256_2_4_0.5_0.5_0.5_50_256_256_8_4_1e-05_1_1_4dfdf604-80a1-4e5c-b2cf-f977405add12. Expected fold: 4
+MISSING FILE: No TXT file found in ./assist2015/bakt/bakt_tiaocan_assist2015_42_0_0.1_256_256_2_4_0.5_0.5_0.5_50_256_256_4_4_1e-05_1_1_1977cc29-045c-46b6-b85f-6a5636ae2a68. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/bakt/bakt_tiaocan_assist2015_42_1_0.1_256_64_2_4_0.5_0.5_0.5_50_256_256_8_4_0.0001_1_1_0ee21791-de7f-49bb-941a-10de4f51345a. Expected fold: 1
+Skipping assist2015/bakt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/deep_irt/deep_irt_tiaocan_assist2015_3407_1_0.1_64_0.001_32_1_1_d6015e3b-8f3d-4c1c-89f4-81772561604f_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/deep_irt/deep_irt_tiaocan_assist2015_3407_2_0.1_64_0.001_32_1_1_a04efa7f-c35a-4630-b519-9fbf55ce38bd_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/deep_irt/deep_irt_tiaocan_assist2015_42_0_0.05_64_0.001_32_1_1_33f02ad0-9061-447e-b85d-90603538aff4_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/deep_irt/deep_irt_tiaocan_assist2015_42_3_0.05_64_0.001_32_1_1_62592c66-cedf-467f-adbd-16463459e951_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/deep_irt/deep_irt_tiaocan_assist2015_42_4_0.1_64_0.001_32_1_1_707e2402-d6ef-429b-a537-db284d131871_4. Expected fold: 4
+Skipping assist2015/deep_irt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/dkt/dkt_tiaocan_assist2015_3407_1_0.3_256_0.001_1_1_bc637dd6-bc98-4d82-952c-b2cff9ad1d3c_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/dkt/dkt_tiaocan_assist2015_3407_2_0.5_256_0.001_1_1_2b205e23-b546-4479-a291-c293cf044cc1_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/dkt/dkt_tiaocan_assist2015_3407_3_0.5_256_0.001_1_1_ac814fd7-cdc7-4451-ab32-357f82b28ec5_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/dkt/dkt_tiaocan_assist2015_42_0_0.5_256_0.001_1_1_02504d7a-8d9c-465e-b7d2-6df28bbe8069_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/dkt/dkt_tiaocan_assist2015_42_4_0.05_256_0.001_1_1_f8c6a83c-b55e-4b0a-982f-6179d027c94a_4. Expected fold: 4
+Skipping assist2015/dkt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/dkt+/dkt_plus_tiaocan_assist2015_3407_0_0.5_256_0.001_0.05_0.1_1.0_1_1_279e6764-aa28-467d-8c0f-e79abcccd682_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/dkt+/dkt_plus_tiaocan_assist2015_3407_2_0.05_256_0.001_0.05_1.0_10.0_1_1_c60cc1a0-1d09-4176-8e39-0a2183e436dd_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/dkt+/dkt_plus_tiaocan_assist2015_3407_3_0.1_256_0.001_0.05_1.0_3.0_1_1_93fd5b64-5562-45e4-80fc-1c678fc87edb_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/dkt+/dkt_plus_tiaocan_assist2015_42_1_0.5_256_0.001_0.0_0.0_3.0_1_1_29e28d75-ecd8-4ed4-9308-9fffaf94436b_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/dkt+/dkt_plus_tiaocan_assist2015_42_4_0.3_256_0.001_0.0_0.1_3.0_1_1_f6037ec1-c95f-43f1-a311-1598c7bbdde1_4. Expected fold: 4
+Skipping assist2015/dkt+: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/dkvmn/dkvmn_tiaocan_assist2015_3407_1_0.05_64_0.001_32_1_1_7cadd5a5-cde9-4073-9695-17c46f163b60_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/dkvmn/dkvmn_tiaocan_assist2015_3407_4_0.5_256_0.001_32_1_1_9600a6f8-3787-4873-98d5-2bf36891439a_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./assist2015/dkvmn/dkvmn_tiaocan_assist2015_42_0_0.1_64_0.001_32_1_1_b835a1c4-c0c8-4b45-b8ac-239a0da6a930_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/dkvmn/dkvmn_tiaocan_assist2015_42_2_0.3_256_0.001_32_1_1_09f3e043-ce3a-4655-b8dd-b17388f4bccb_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/dkvmn/dkvmn_tiaocan_assist2015_42_3_0.05_64_0.001_32_1_1_7465a535-3225-423d-99f8-3d0bb76d90fb_3. Expected fold: 3
+Skipping assist2015/dkvmn: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/gkt/gkt_tiaocan_assist2015_3407_1_0.001_0.5_64_transition_1_1_64_2f9dcaab-af1f-4fba-b589-f4db6bcb707c_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/gkt/gkt_tiaocan_assist2015_3407_2_0.0001_0.5_64_transition_1_1_64_a11c9aa1-4e6e-4a3b-a635-3d58bf6b7219_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/gkt/gkt_tiaocan_assist2015_3407_4_0.001_0.5_64_transition_1_1_64_28ae1acf-d1c8-4b46-9594-c077b9b18669_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./assist2015/gkt/gkt_tiaocan_assist2015_42_0_0.001_0.5_64_transition_1_1_64_7b1f25c1-b68a-4fb1-9085-fd889a4fbc31_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/gkt/gkt_tiaocan_assist2015_42_3_0.001_0.5_64_transition_1_1_64_25a4d646-a2e5-444a-b4fe-65fed9c3c67f_3. Expected fold: 3
+Skipping assist2015/gkt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/kqn/kqn_tiaocan_assist2015_3407_1_0.3_256_64_256_1_0.001_1_1_6103f596-9e0b-4d4c-a27e-068ddc11dd82_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/kqn/kqn_tiaocan_assist2015_3407_2_0.1_256_64_64_1_0.001_1_1_c2d1f67d-1385-4b18-a7ef-45f0a43604ff_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/kqn/kqn_tiaocan_assist2015_42_0_0.05_256_64_64_1_0.001_1_1_5eacc29c-4890-4009-831e-d39ca6b802f6_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/kqn/kqn_tiaocan_assist2015_42_3_0.05_256_64_64_1_0.001_1_1_f8ba4ac1-8190-4d5d-9788-c8762635462e_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/kqn/kqn_tiaocan_assist2015_42_4_0.05_256_64_256_1_0.001_1_1_bbf581e0-1260-490e-a468-8d1836674582_4. Expected fold: 4
+Skipping assist2015/kqn: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/saint/saint_tiaocan_assist2015_3407_1_0.5_64_0.001_4_4_1_1_1c3fe173-6c43-452d-929f-c01457af4ce3_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/saint/saint_tiaocan_assist2015_3407_2_0.5_64_0.001_4_2_1_1_a8030c57-80f2-4249-bf52-97b04ac740d4_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/saint/saint_tiaocan_assist2015_42_0_0.5_64_0.001_4_4_1_1_822e4bfb-1244-4a3c-b538-38bdf7bbeed2_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/saint/saint_tiaocan_assist2015_42_3_0.5_64_0.001_4_4_1_1_9002cf0d-c5d4-4478-b103-9fa57a100bce_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/saint/saint_tiaocan_assist2015_42_4_0.3_64_0.001_8_4_1_1_6981aa0d-c227-4451-b1b8-1932e22daf66_4. Expected fold: 4
+Skipping assist2015/saint: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/sakt/sakt_tiaocan_assist2015_3407_0_0.5_256_0.0001_8_1_1_1_1e21e073-0c5a-47ae-89e1-7a27c51821a7_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/sakt/sakt_tiaocan_assist2015_3407_1_0.3_256_0.0001_8_1_1_1_844894d8-2207-4d66-97af-5c512850d22f_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/sakt/sakt_tiaocan_assist2015_3407_2_0.5_256_0.0001_8_1_1_1_26cfe247-f51d-40ef-9834-39f436f2b78b_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/sakt/sakt_tiaocan_assist2015_3407_3_0.5_256_0.0001_8_1_1_1_d85cf631-1492-447c-8c76-830c9955c889_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/sakt/sakt_tiaocan_assist2015_3407_4_0.5_256_0.0001_8_1_1_1_a34b65db-9466-4aad-8774-10498314101f_4. Expected fold: 4
+Skipping assist2015/sakt: No successful folds found.
+MISSING FILE: No TXT file found in ./assist2015/skvmn/skvmn_tiaocan_assist2015_3407_0_0.1_64_0.001_32_1_1_a5e53345-bae5-4f11-ad9e-1ee720ff14c2. Expected fold: 0
+MISSING FILE: No TXT file found in ./assist2015/skvmn/skvmn_tiaocan_assist2015_3407_2_0.1_64_0.001_32_1_1_7ce87e39-ec1b-4f03-8f3f-f00a5242d39d. Expected fold: 2
+MISSING FILE: No TXT file found in ./assist2015/skvmn/skvmn_tiaocan_assist2015_42_1_0.05_256_0.0001_32_1_1_43289b3a-03ef-4b08-97b6-583c29bd709a. Expected fold: 1
+MISSING FILE: No TXT file found in ./assist2015/skvmn/skvmn_tiaocan_assist2015_42_3_0.3_256_0.0001_32_1_1_1a9b677f-bc65-4c52-a2c7-85387b227317. Expected fold: 3
+MISSING FILE: No TXT file found in ./assist2015/skvmn/skvmn_tiaocan_assist2015_42_4_0.1_64_0.001_32_1_1_739fdc2b-a9b6-4673-97d4-2cf3882ed315. Expected fold: 4
+Skipping assist2015/skvmn: No successful folds found.
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dimkt/dimkt_tiaocan_bridge2algebra2006_0.001_42_1_0.0001_0.05_64_64_199_100_1_1_5542ed11-0db8-4c20-9f4a-1af3c07849e6. Expected fold: 42
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dimkt/dimkt_tiaocan_bridge2algebra2006_0.001_42_2_0.0001_0.3_256_64_199_50_1_1_6fdfad58-7957-4c9f-b90f-968462f2d3ea. Expected fold: 42
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt/dkt_tiaocan_bridge2algebra2006_3407_2_0.5_256_0.001_1_1_06a8653c-94ee-4fcd-9b65-227cf157ee79_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt/dkt_tiaocan_bridge2algebra2006_3407_4_0.5_256_0.001_1_1_e33bd47d-7e0c-43b6-9bc5-b85f8f0ea3ea_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt_forget/dktforget_tiaocan_bridge2algebra2006_3407_0_0.5_64_0.001_1_1_7ddddac9-8c2e-4ceb-ba4a-4c2bb2506f7c_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt_forget/dktforget_tiaocan_bridge2algebra2006_3407_1_0.3_64_0.001_1_1_54ca809e-758e-40f0-91d7-79a6f231b973_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt_forget/dktforget_tiaocan_bridge2algebra2006_3407_4_0.1_64_0.001_1_1_94c597d8-2cb0-45ef-ad58-cca20741ad1f_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkvmn/dkvmn_tiaocan_bridge2algebra2006_3407_2_0.1_256_0.001_64_1_1_510a0a79-10c7-4b1a-b672-56945642af3e_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkvmn/dkvmn_tiaocan_bridge2algebra2006_42_0_0.1_256_0.001_32_1_1_572c3ec0-67af-4fee-9c92-1d5a75541beb_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./bridge2algebra2006/gkt/gkt_tiaocan_bridge2algebra2006_42_0_0.001_0.5_64_transition_1_1_64_08477304-5afd-4231-b2fe-62708495d4bd_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./bridge2algebra2006/gkt/gkt_tiaocan_bridge2algebra2006_42_1_0.001_0.5_64_transition_1_1_64_6e67b856-b0e1-4db7-a10f-4904fdcc1fd0_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./bridge2algebra2006/gkt/gkt_tiaocan_bridge2algebra2006_42_2_0.001_0.5_64_transition_1_1_64_18de82c9-3533-4eb7-a140-eaf6cc6e9fcb_2. Expected fold: 2
+MISSING FILE: No TXT file found in ./bridge2algebra2006/gkt/gkt_tiaocan_bridge2algebra2006_42_3_0.001_0.5_64_transition_1_1_64_84cbf52f-b77f-4f91-a12a-531e55662eac_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./bridge2algebra2006/hawkes/hawkes_tiaocan_bridge2algebra2006_3407_1_256_10_1e-06_0.001_1_1_6be038ee-a734-47fb-9be1-d670b3ab82ca_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./bridge2algebra2006/hawkes/hawkes_tiaocan_bridge2algebra2006_3407_4_64_10_1e-06_0.001_1_1_cc8baf5f-71f9-464e-8488-578ed90a9237_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt+/dkt_plus_tiaocan_bridge2algebra2006_3407_0_0.5_256_0.001_0.0_0.01_0.3_1_1_2eaf09b9-f416-495a-94a9-49a353730525_0. Expected fold: 0
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt+/dkt_plus_tiaocan_bridge2algebra2006_3407_1_0.3_256_0.001_0.0_0.0_0.3_1_1_c88e33b0-63b4-4d33-aca3-c860119b0ff0_1. Expected fold: 1
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt+/dkt_plus_tiaocan_bridge2algebra2006_3407_3_0.1_256_0.001_0.05_0.0_3.0_1_1_0eba1932-8f26-4cdc-8bf1-91dae681cf46_3. Expected fold: 3
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt+/dkt_plus_tiaocan_bridge2algebra2006_3407_4_0.5_256_0.001_0.0_0.03_0.3_1_1_759325c0-4555-49e3-8a32-5931b223b9d7_4. Expected fold: 4
+MISSING FILE: No TXT file found in ./bridge2algebra2006/dkt+/dkt_plus_tiaocan_bridge2algebra2006_42_2_0.5_256_0.001_0.05_0.0_0.0_1_1_a7a226fa-483f-4133-81c6-02d11a65cfbe_2. Expected fold: 2
+Skipping bridge2algebra2006/dkt+: No successful folds found.
+MISSING FILE: No TXT file found in ./bridge2algebra2006/iekt/iekt_tiaocan_bridge2algebra2006_0.001_3407_0_0.1_256_50_1_20_10_0.8_1_1_9be2c984-e69f-442f-b9ba-c4a489b1af90_0. Expected fold: 3407
+MISSING FILE: No TXT file found in ./bridge2algebra2006/iekt/iekt_tiaocan_bridge2algebra2006_0.001_3407_1_0.05_256_40_1_10_20_0.4_1_1_0d6e1c0f-0209-4c2c-9a66-acbf25e377fe_1. Expected fold: 3407
+MISSING FILE: No TXT file found in ./bridge2algebra2006/iekt/iekt_tiaocan_bridge2algebra2006_0.001_3407_3_0.3_256_50_1_20_20_0.8_1_1_ff3dc3bd-7364-45c3-b017-8d6f7e39ba7b_3. Expected fold: 3407
+MISSING FILE: No TXT file found in ./bridge2algebra2006/iekt/iekt_tiaocan_bridge2algebra2006_0.001_3407_4_0.05_256_50_1_20_30_0.6_1_1_f5b7dae8-308b-4a19-a02c-39fc14111c3d_4. Expected fold: 3407
+MISSING FILE: No TXT file found in ./bridge2algebra2006/iekt/iekt_tiaocan_bridge2algebra2006_0.001_42_2_0.05_256_40_1_30_30_0.6_1_1_d6b1a044-dcd5-4cff-82e9-6874590c4640_2. Expected fold: 42
+Skipping bridge2algebra2006/iekt: No successful folds found.
