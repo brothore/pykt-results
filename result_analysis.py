@@ -153,15 +153,19 @@ if __name__ == "__main__":
     # 1. 在这里手动定义您的文件路径列表
     # (请确保使用正确的路径分隔符，或者在字符串前加 r)
     my_file_paths = [
-        r"/data/pykt-toolkit/examples/saved_model/assist2009_akt_qid_saved_model_3407_0_0.1_64_256_4_4_0.001_0_1_1/qid_test_question_window_predictions.txt",
-        r"/data/pykt-toolkit/examples/saved_model/assist2009_0_0.0001_3407_32_200_0_1_saved_model_qikt_mamba_attn_0.5_256_1_2.0_gru_0/attn_test_window_predictions.txt",
+        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\qikt_attn_test_window_predictions.txt",
+        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\akt_qid_test_question_window_predictions.txt",
+        # r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\hawkes_qid_test_question_window_predictions.txt",
+        # r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\simplekt_qid_test_question_window_predictions.txt"
         # ... 您可以添加任意多个文件
     ]
     
     # 2. 为每个文件定义一个唯一的模型名称 (将用于DataFrame的列名)
     my_model_names = [
-        "akt",
         "qikt",
+        "akt",
+        # "hawkes",
+        # "simplekt",
         # ... 确保名称与文件一一对应
     ]
 
@@ -183,7 +187,7 @@ if __name__ == "__main__":
                 print(f"{name} Mean AUC: {mean_auc:.5f}")
         file_model_names = '_'.join(my_model_names)
         # (可选) 将最终结果保存到 Excel 或 CSV
-        output_csv_path = f"/data/pykt-results/analysis_result/kt_merged_analysis_{file_model_names}_{file_timestamp}.csv"
+        output_csv_path = f"F:\ResilioSync\works\KT\sync\docs&works\\1116data\pykt-results\\analysis_result\kt_merged_analysis_{file_model_names}_{file_timestamp}.csv"
         final_merged_df.to_csv(output_csv_path, index=False, encoding='utf-8-sig')
         print(f"\n结果已保存到: {output_csv_path}")
         
