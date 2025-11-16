@@ -4,7 +4,7 @@ import json
 from sklearn.metrics import roc_auc_score
 
 ENABLE_SLIDING_WINDOW = True
-
+WINDOW_SIZE = 200
 def calculate_wealth_metrics(wealth_list, alphas=[1.0, 2.0, 3.0]):
     """
     计算平均财富、基尼系数、以及多个 alpha 下的 EAWI 指标。
@@ -137,6 +137,10 @@ def parse_and_calculate_aucs_from_file(file_path):
         raise FileNotFoundError(f"文件未找到: {file_path}")
     except Exception as e:
         raise Exception(f"读取文件时发生错误: {e}")
+    # 在数据准备后添加检查
+    print(f"late_trues 的唯一值: {data['late_trues'].unique()}")
+    print(f"late_trues 的值计数:\n{data['late_trues'].value_counts()}")
+
     
     required_cols = ['orirow', 'late_trues', 'late_mean']
     if not all(col in data.columns for col in required_cols):
@@ -253,40 +257,80 @@ def parse_and_calculate_aucs_from_file(file_path):
     return student_auc_df, overall_auc_info
 
 # --- 外层保存函数 (保持不变) ---
-def save_auc_results_from_file(input_file_path, student_auc_output_csv, overall_stats_output_json):
+def save_auc_results_from_file(input_file_path, student_auc_output_csv=None, overall_stats_output_json=None):
     """
     解析本地TXT文件，并保存学生AUC DataFrame和整体统计结果字典。
+
+    如果 student_auc_output_csv 或 overall_stats_output_json 为 None，
+    它们将默认保存在与 input_file_path 相同的目录中，
+    文件名分别为 'student_auc_output.csv' 和 'overall_stats_output.json'。
     """
     try:
-        # 1. 解析和计算 AUC
+        # 1. 获取输入文件的基本目录
+        base_dir = os.path.dirname(input_file_path)
+
+        # 2. 检查并设置默认的 CSV 输出路径
+        if student_auc_output_csv is None:
+            # 默认文件名基于原变量名的含义
+            default_csv_name = "student_auc_output.csv"
+            student_auc_output_csv = os.path.join(base_dir, default_csv_name)
+        
+        # 3. 检查并设置默认的 JSON 输出路径
+        if overall_stats_output_json is None:
+            # 默认文件名基于原变量名的含义
+            default_json_name = "overall_stats_output.json"
+            overall_stats_output_json = os.path.join(base_dir, default_json_name)
+
+        # 4. 解析和计算 AUC (来自您的原始逻辑)
         student_df, overall_info = parse_and_calculate_aucs_from_file(input_file_path)
         
-        # 2. 保存学生 AUC DataFrame
+        # 5. 保存学生 AUC DataFrame (来自您的原始逻辑)
         student_df.to_csv(student_auc_output_csv, index=False)
         print(f"✅ 学生AUC结果已保存至: {student_auc_output_csv}")
         
-        # 3. 保存总体统计结果字典
+        # 6. 保存总体统计结果字典 (来自您的原始逻辑)
         with open(overall_stats_output_json, 'w', encoding='utf-8') as f:
             json.dump(overall_info, f, indent=4, ensure_ascii=False, 
-                     default=lambda x: round(x, 6) if isinstance(x, (float, np.float_)) else x)
+                      default=lambda x: round(x, 6) if isinstance(x, (float, np.float_)) else x)
             
         print(f"✅ 总体统计结果已保存至: {overall_stats_output_json}")
 
     except Exception as e:
         print(f"❌ 发生错误: {e}")
+def main():
+    """
+    主执行函数，用于从命令行接收输入文件路径。
+    """
+    # sys.argv 是一个列表，包含所有命令行参数
+    # sys.argv[0] 是脚本本身的名称 (例如 "process_auc.py")
+    # sys.argv[1] 是第一个参数 (我们期望的 <input_file_path>)
+    
+    # 检查用户是否提供了正好一个参数（文件路径）
+    if len(sys.argv) != 2:
+        print("❌ 错误：参数数量不正确。")
+        # 打印用法指南
+        print(f"用法: python {sys.argv[0]} <input_file_path>")
+        sys.exit(1) # 退出程序，并返回一个错误码
 
-# --- 示例使用 (保持不变) ---
-file_path = r"D:\sync\docs&works\0914论文编写\实验结果\all_result\nips_task34\akt\akt_tiaocan_nips_task34_42_1_0.1_64_64_8_4_0.001_1_1_73940a49-0fb7-492d-a703-533f8158dcc6_1\qid_test_question_predictions.txt"
-student_csv_path = 'student_auc_results.csv'
-stats_json_path = 'overall_auc_stats.json'
+    # 获取文件路径
+    input_file = sys.argv[1]
 
-# 执行并保存结果
-# save_auc_results_from_file(file_path, student_csv_path, stats_json_path)
+    # (推荐) 检查文件是否存在
+    if not os.path.exists(input_file):
+        print(f"❌ 错误：文件未找到: {input_file}")
+        sys.exit(1)
 
-# 打印统计结果以便直接查看
-# student_df, overall_info = parse_and_calculate_aucs_from_file(file_path)
-# print("\n--- 每个学生的AUC (DataFrame) ---")
-# print(student_df)
+    print(f"--- 正在处理文件: {input_file} ---")
+    
+    # 调用您的核心函数
+    # 由于我们只传入了 input_file，后两个参数将使用默认值 (None)
+    # 这将触发您函数中的默认路径逻辑
+    save_auc_results_from_file(input_file)
+    
+    print(f"--- 文件处理完成 ---")
 
-# print("\n--- 整体统计结果 (Dictionary) ---")
-# print(json.dumps(overall_info, indent=4, default=lambda x: round(x, 6) if isinstance(x, (float, np.float_)) else x))
+# ---------------------------------------------------------------------------
+# [执行入口] - 只有当脚本被直接运行时才调用 main()
+# ---------------------------------------------------------------------------
+if __name__ == "__main__":
+    main()
