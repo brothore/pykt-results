@@ -34,7 +34,7 @@ class KTAnalysisGUI:
         # --- 主内容区 (使用 PanedWindow 分割) ---
         # 左右分割
         main_paned = ttk.PanedWindow(self.root, orient=tk.HORIZONTAL)
-        main_paned.pack(fill=tk.BOTH, expand=True, flex=1)
+        main_paned.pack(fill=tk.BOTH, expand=True)
 
         # --- 左侧面板：学生列表 ---
         left_frame = ttk.Frame(main_paned, padding=5)

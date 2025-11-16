@@ -2,6 +2,9 @@ import pandas as pd
 import numpy as np
 import os
 from sklearn.metrics import roc_auc_score
+import datetime
+
+# 获取当前时间
 
 def process_file(filepath, model_name):
     """
@@ -9,11 +12,6 @@ def process_file(filepath, model_name):
     
     假定文件是空白符（如tab或空格）分隔的。
     将每个学生的时间步数据聚合成单行，包含完整的序列。
-    
-    *** 新逻辑: ***
-    在聚合序列前，会逐行检查 'questions' 和 'concepts'。
-    如果 'questions' 是重复的 (如 "367,367") 且 'concepts' 是 "20,30"，
-    则将该行转换为 'questions'="367" 和 'concepts'="[20,30]"。
     """
     try:
         # 使用 \s+ 作为分隔符来匹配一个或多个空白字符
@@ -23,6 +21,7 @@ def process_file(filepath, model_name):
         return pd.DataFrame()
 
     # 1. 清理数据：过滤掉混入的表头行
+    # 我们通过qidx列是否为数字来判断。如果不是数字（如 'qidx' 字符串），则丢弃
     df = df[pd.to_numeric(df['qidx'], errors='coerce').notnull()]
 
     # 2. 转换必要的数据类型
@@ -44,51 +43,13 @@ def process_file(filepath, model_name):
     student_data = []
     # 遍历所有分组（每个学生）
     for orirow_id, group in grouped:
+        # 拼接字符串序列
+        questions_seq = ",".join(group['questions'])
+        concepts_seq = ",".join(group['concepts'])
         
-        # === [修改点开始] ===
-        # 我们不再直接 .join() 整个Series，而是逐行处理
-        
-        processed_questions_list = []
-        processed_concepts_list = []
-        
-        # 收集 trues 和 preds 列表 (这部分逻辑不变)
+        # 收集 trues 和 preds 列表用于计算AUC
         trues_seq = list(group['late_trues'])
         preds_seq = list(group['late_mean'])
-
-        # 遍历该学生的 *每一行* (每一个时间步)
-        for _, row in group.iterrows():
-            q_str = row['questions']
-            c_str = row['concepts']
-            
-            q_parts = q_str.split(',')
-            c_parts = c_str.split(',')
-            
-            # 情况1：q="367,367,367" c="20,47,31" (您描述的原始数据)
-            # 检查q_parts是否所有元素都相同，且q和c的长度匹配
-            is_repetitive_q = len(q_parts) > 1 and all(q == q_parts[0] for q in q_parts)
-            
-            if is_repetitive_q and len(q_parts) == len(c_parts):
-                # 转换: q="367", c="[20,47,31]"
-                processed_questions_list.append(q_parts[0])
-                processed_concepts_list.append(f"[{c_str}]")
-            
-            # 情况2：q="367" c="20,47,31" (q已经是单个，c是多个)
-            elif len(q_parts) == 1 and len(c_parts) > 1:
-                # 转换: q="367", c="[20,47,31]"
-                processed_questions_list.append(q_str)
-                processed_concepts_list.append(f"[{c_str}]")
-                
-            # 情况3：q="101" c="10" (标准一对一)
-            # (或 len(q_parts) != len(c_parts) 的异常情况，保持原样)
-            else:
-                processed_questions_list.append(q_str)
-                processed_concepts_list.append(c_str)
-
-        # 拼接字符串序列 (使用处理后的列表)
-        questions_seq = ",".join(processed_questions_list)
-        concepts_seq = ",".join(processed_concepts_list)
-        # === [修改点结束] ===
-        
         
         student_data.append({
             'questions': questions_seq,
@@ -136,21 +97,21 @@ def merge_kt_results(file_paths, model_names):
         print("未成功解析任何文件。")
         return pd.DataFrame()
 
-    # 关键假设：所有文件的学生顺序一致
-    # 1. 从第一个文件获取基础信息 (questions, concepts)
-    #    并重置索引，以便后续按行号合并
-    base_df = all_model_data[0][['questions', 'concepts']].reset_index(drop=True)
-    
-    # 2. 添加全局学生ID
-    base_df['student_id'] = base_df.index
+    # 1. 将第一个DataFrame作为基础
+    result_df = all_model_data[0]
 
-    # 3. 水平合并所有模型的数据
-    result_df = base_df.copy()
-    for model_df in all_model_data:
-        # 提取模型特定的列 (trues 和 preds)
-        model_specific_cols = model_df.drop(columns=['questions', 'concepts'], errors='ignore')
-        # 重置索引以确保按行号对齐（第0个学生 vs 第0个学生）
-        result_df = pd.concat([result_df, model_specific_cols.reset_index(drop=True)], axis=1)
+    # 2. 迭代地将其余的DataFrame合并进来
+    if len(all_model_data) > 1:
+        for i in range(1, len(all_model_data)):
+            result_df = pd.merge(
+                result_df, 
+                all_model_data[i], 
+                on=['questions', 'concepts'],
+                how='outer'
+            )
+
+    # 3. 添加全局学生ID
+    result_df.insert(0, 'student_id', range(len(result_df)))
 
     # 4. 计算每个模型的AUC
     for model_name in model_names:
@@ -159,9 +120,15 @@ def merge_kt_results(file_paths, model_names):
         auc_col = f'auc_{model_name}'
         
         if trues_col in result_df and preds_col in result_df:
-            # 使用 apply 计算每一行（学生）的AUC
+            
+            # =================== 关键修改在这里 ===================
+            # 我们使用 isinstance(..., list) 来检查单元格是否包含列表
+            # 而不是 pd.notna()
+            # ========================================================
             result_df[auc_col] = result_df.apply(
-                lambda row: calculate_auc(row[trues_col], row[preds_col]),
+                lambda row: calculate_auc(row[trues_col], row[preds_col])
+                            if isinstance(row[trues_col], list) and isinstance(row[preds_col], list)
+                            else np.nan,
                 axis=1
             )
         else:
@@ -175,14 +142,14 @@ def merge_kt_results(file_paths, model_names):
     final_cols = [col for col in ordered_cols if col in result_df.columns]
     
     return result_df[final_cols]
-
-
 # ==================================================================
 #                       *** 如何使用 ***
 # ==================================================================
 
 if __name__ == "__main__":
-    
+    now = datetime.datetime.now()
+    file_timestamp = now.strftime("%Y%m%d_%H%M%S")
+    print(f"格式 (时间戳): {file_timestamp}")
     # 1. 在这里手动定义您的文件路径列表
     # (请确保使用正确的路径分隔符，或者在字符串前加 r)
     my_file_paths = [
@@ -214,9 +181,9 @@ if __name__ == "__main__":
             if f'auc_{name}' in final_merged_df.columns:
                 mean_auc = final_merged_df[f'auc_{name}'].mean()
                 print(f"{name} Mean AUC: {mean_auc:.4f}")
-
+        file_model_names = '_'.join(my_model_names)
         # (可选) 将最终结果保存到 Excel 或 CSV
-        output_csv_path = "/data/pykt-results/analysis_result/kt_merged_analysis_qikt_akt.csv"
+        output_csv_path = f"/data/pykt-results/analysis_result/kt_merged_analysis_{file_model_names}_{file_timestamp}.csv"
         final_merged_df.to_csv(output_csv_path, index=False, encoding='utf-8-sig')
         print(f"\n结果已保存到: {output_csv_path}")
         
