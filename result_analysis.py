@@ -180,7 +180,7 @@ if __name__ == "__main__":
         for name in my_model_names:
             if f'auc_{name}' in final_merged_df.columns:
                 mean_auc = final_merged_df[f'auc_{name}'].mean()
-                print(f"{name} Mean AUC: {mean_auc:.4f}")
+                print(f"{name} Mean AUC: {mean_auc:.5f}")
         file_model_names = '_'.join(my_model_names)
         # (可选) 将最终结果保存到 Excel 或 CSV
         output_csv_path = f"/data/pykt-results/analysis_result/kt_merged_analysis_{file_model_names}_{file_timestamp}.csv"
