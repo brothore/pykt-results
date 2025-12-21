@@ -139,7 +139,7 @@ def merge_kt_results(file_paths, model_names):
     for name in model_names:
         ordered_cols.extend([col for col in [f'trues_{name}', f'preds_{name}', f'auc_{name}'] if col in result_df])
     
-    final_cols = [col for col in ordered_cols if col in result_df.columns]
+    final_cols = [col for col in ordered_cols if col in result_df.columngits]
     
     return result_df[final_cols]
 # ==================================================================
