@@ -10,23 +10,32 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 
-#以此优化图表显示中文字体 (如果有需要可开启，否则使用默认)
+# 优化字体 (Windows下通常用SimHei，Mac/Linux可能需要调整)
 plt.rcParams['axes.unicode_minus'] = False 
+# plt.rcParams['font.sans-serif'] = ['SimHei'] # 如果中文显示方框，请取消此行注释
 
 class KTAnalysisGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("知识追踪 (KT) 序列可视化工具 (Knowledge Tracing Sequence Visualization)")
+        self.root.title("知识追踪 (KT) 序列可视化工具 - 增强版")
         self.root.geometry("1600x900")
 
         self.df = None
         self.model_names = []
         self.student_cols = [] 
         self.current_student_data = [] 
+        self.model_vars = {} # 存储模型复选框状态 {model_name: tk.BooleanVar}
+        self.model_checkbuttons = {} # 存储复选框组件
 
         self.student_table_headings = {} 
         self.last_sort_col = None
         self.last_sort_reverse = False
+
+        # 当前选中的数据缓存，用于刷新图表
+        self.selected_student_id = None
+        self.current_timesteps = []
+        self.current_trues = []
+        self.current_preds_map = {}
 
         self.create_widgets()
 
@@ -37,7 +46,7 @@ class KTAnalysisGUI:
 
         self.btn_load = ttk.Button(top_frame, text="加载 CSV 分析文件 (Load CSV)", command=self.load_csv)
         self.btn_load.pack(side=tk.LEFT)
-        self.lbl_file = ttk.Label(top_frame, text="未加载文件 (No file loaded)")
+        self.lbl_file = ttk.Label(top_frame, text="未加载文件")
         self.lbl_file.pack(side=tk.LEFT, padx=10)
 
         # --- 主内容区 (使用 PanedWindow 分割) ---
@@ -91,12 +100,12 @@ class KTAnalysisGUI:
 
         # --- 右上：序列详情表格 ---
         seq_frame = ttk.Frame(right_paned, padding=5)
-        right_paned.add(seq_frame, weight=4) 
+        right_paned.add(seq_frame, weight=3) 
 
         ttk.Label(seq_frame, text="学生序列详情 (Student Sequence Detail)", font=("-weight bold", 12)).pack(fill=tk.X)
 
         seq_cols = ['timestep', 'q_id', 'c_id', 'true']
-        self.sequence_table = ttk.Treeview(seq_frame, columns=seq_cols, show='headings', height=10)
+        self.sequence_table = ttk.Treeview(seq_frame, columns=seq_cols, show='headings', height=8)
         self.sequence_table.pack(fill=tk.BOTH, expand=True)
 
         vsb_seq = ttk.Scrollbar(self.sequence_table, orient="vertical", command=self.sequence_table.yview)
@@ -109,28 +118,56 @@ class KTAnalysisGUI:
 
         self.sequence_table.bind("<<TreeviewSelect>>", self.on_timestep_select)
 
-        # --- 右下：全局预测曲线图 (改动最大区域) ---
-        plot_frame = ttk.Frame(right_paned, padding=5)
-        right_paned.add(plot_frame, weight=6) 
+        # --- 右下：全局预测曲线图 (包含滚动条和复选框) ---
+        plot_container = ttk.Frame(right_paned, padding=5)
+        right_paned.add(plot_container, weight=7) 
 
-        ttk.Label(plot_frame, text="全序列预测概率 vs 真实作答 (Full Sequence Prediction vs True)", font=("-weight bold", 12)).pack(fill=tk.X)
+        # 1. 模型控制区域 (复选框)
+        self.model_control_frame = ttk.LabelFrame(plot_container, text="模型显示控制 (Model Visibility)", padding=5)
+        self.model_control_frame.pack(fill=tk.X, side=tk.TOP, pady=(0, 5))
+        # (复选框将在加载CSV后动态生成)
 
-        # 创建图表对象
-        self.fig = Figure(figsize=(8, 4), dpi=100)
+        ttk.Label(plot_container, text="全序列预测概率 & 累计AUC (Full Sequence Prediction & Cumulative AUC)", font=("-weight bold", 12)).pack(fill=tk.X)
+
+        # 2. 滚动图表区域
+        # 使用 Canvas + Scrollbar 实现 matplotlib 图表的滚动
+        self.plot_scroll_frame = ttk.Frame(plot_container)
+        self.plot_scroll_frame.pack(fill=tk.BOTH, expand=True)
+
+        self.plot_h_scrollbar = ttk.Scrollbar(self.plot_scroll_frame, orient=tk.HORIZONTAL)
+        self.plot_h_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+
+        self.plot_canvas_wrapper = tk.Canvas(self.plot_scroll_frame, bg="white", xscrollcommand=self.plot_h_scrollbar.set)
+        self.plot_canvas_wrapper.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+        
+        self.plot_h_scrollbar.config(command=self.plot_canvas_wrapper.xview)
+
+        # 初始化 Figure
+        self.fig = Figure(figsize=(10, 5), dpi=100)
         self.ax = self.fig.add_subplot(111)
 
-        self.plot_canvas = FigureCanvasTkAgg(self.fig, master=plot_frame)
-        self.plot_canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
+        # 将 Figure 放入 FigureCanvasTkAgg
+        self.chart_canvas = FigureCanvasTkAgg(self.fig, master=self.plot_canvas_wrapper)
+        self.chart_widget = self.chart_canvas.get_tk_widget()
+
+        # 将 chart_widget 放入 wrapper canvas 的窗口中
+        self.canvas_window_id = self.plot_canvas_wrapper.create_window(0, 0, window=self.chart_widget, anchor="nw")
+
+        # 绑定大小变化事件，确保高度自适应
+        self.plot_canvas_wrapper.bind("<Configure>", self._on_canvas_configure)
 
         self._init_empty_plot()
 
+    def _on_canvas_configure(self, event):
+        """当外层 Canvas 大小改变时，更新图表高度以填满"""
+        current_width = self.chart_widget.winfo_width()
+        # 保持当前宽度，但高度跟随容器
+        self.plot_canvas_wrapper.itemconfig(self.canvas_window_id, height=event.height)
+
     def _init_empty_plot(self):
         self.ax.clear()
-        self.ax.set_title("Please select a student to visualize trajectory")
-        self.ax.set_xlabel("Time Step")
-        self.ax.set_ylabel("Probability / Correctness")
-        self.ax.grid(True, linestyle='--', alpha=0.5)
-        self.plot_canvas.draw()
+        self.ax.text(0.5, 0.5, "Please load data and select a student", ha='center', va='center')
+        self.chart_canvas.draw()
 
     def clear_treeview(self, tree):
         for item in tree.get_children():
@@ -192,7 +229,7 @@ class KTAnalysisGUI:
                 
                 self.student_table_headings[col] = col_name 
                 self.student_table.heading(col, text=col_name, 
-                                           command=lambda c=col: self.sort_by_column(self.student_table, c))
+                                     command=lambda c=col: self.sort_by_column(self.student_table, c))
                 width = 80
                 if col == 'student_id': width = 60
                 elif col == 'seq_len': width = 50
@@ -205,6 +242,21 @@ class KTAnalysisGUI:
                 self.filter_col_menu['menu'].add_command(label=col, command=tk._setit(self.filter_col_var, col))
             self.filter_col_var.set(self.student_cols[0]) 
             
+            # --- 生成模型复选框 ---
+            for widget in self.model_control_frame.winfo_children():
+                widget.destroy()
+            
+            self.model_vars = {}
+            self.model_checkbuttons = {}
+            
+            for model in self.model_names:
+                var = tk.BooleanVar(value=True) # 默认选中
+                cb = ttk.Checkbutton(self.model_control_frame, text=model, variable=var, 
+                                     command=self.refresh_plot) # 勾选变化时刷新图
+                cb.pack(side=tk.LEFT, padx=10)
+                self.model_vars[model] = var
+                self.model_checkbuttons[model] = cb
+
             self.reset_student_table()
             print(f"加载成功! 识别到 {len(self.model_names)} 个模型: {self.model_names}")
 
@@ -294,38 +346,37 @@ class KTAnalysisGUI:
     # ================== 核心交互逻辑 ==================
 
     def on_student_select(self, event):
-        """当选中学生时，加载序列详情，并直接绘制整条曲线"""
+        """当选中学生时，加载数据并刷新图表"""
         if not self.student_table.selection():
             return
 
         selected_item = self.student_table.selection()[0]
-        selected_student_id = int(self.student_table.item(selected_item)['values'][0])
+        self.selected_student_id = int(self.student_table.item(selected_item)['values'][0])
 
         self.clear_treeview(self.sequence_table)
-        self.ax.clear()
-
+        
         # 获取学生数据
-        student_row = self.df[self.df['student_id'] == selected_student_id].iloc[0]
+        student_row = self.df[self.df['student_id'] == self.selected_student_id].iloc[0]
 
         q_list = str(student_row['questions']).split(',') 
         c_list = str(student_row['concepts']).split(',') 
-        
-        # 基础真实标签 (取第一个模型的真实标签即可，因为真实标签是一样的)
         trues_list = student_row[f'trues_{self.model_names[0]}']
 
-        # 安全截断
         min_len = min(len(q_list), len(c_list), len(trues_list))
         q_list = q_list[:min_len]
         c_list = c_list[:min_len]
         trues_list = trues_list[:min_len]
 
-        # 收集所有模型的预测值
-        all_preds_map = {} # { 'DKT': [0.1, 0.2...], 'AKT': [...] }
+        # 保存到类变量，方便 refresh_plot 使用
+        self.current_timesteps = list(range(min_len))
+        self.current_trues = trues_list
+        self.current_preds_map = {}
+
         for model in self.model_names:
             p_list = student_row[f'preds_{model}']
-            all_preds_map[model] = p_list[:min_len]
+            self.current_preds_map[model] = p_list[:min_len]
 
-        # 1. 填充序列详情表
+        # 1. 填充序列详情表 (不受复选框影响，始终显示所有列)
         pred_cols = [f'pred_{model}' for model in self.model_names]
         seq_cols = ['timestep', 'q_id', 'c_id', 'true'] + pred_cols
         self.sequence_table.config(columns=seq_cols)
@@ -335,74 +386,129 @@ class KTAnalysisGUI:
             self.sequence_table.column(col, width=70, anchor='center')
 
         self.current_student_data = []
-
         for i in range(min_len):
             row_values = [i, q_list[i], c_list[i], trues_list[i]]
             preds_at_t = {}
             for model in self.model_names:
-                val = all_preds_map[model][i]
+                val = self.current_preds_map[model][i]
                 row_values.append(f"{val:.3f}")
                 preds_at_t[model] = val
             
             self.sequence_table.insert('', tk.END, values=row_values, iid=str(i))
-            
             self.current_student_data.append({
                 'timestep': i, 'q_id': q_list[i], 'c_id': c_list[i],
                 'true': trues_list[i], 'preds': preds_at_t
             })
 
-        # 2. 直接绘制整条曲线
-        self.plot_full_student_trajectory(
-            student_id=selected_student_id,
-            timesteps=list(range(min_len)),
-            trues=trues_list,
-            preds_map=all_preds_map
-        )
+        # 2. 绘制图表
+        self.refresh_plot()
 
-    def plot_full_student_trajectory(self, student_id, timesteps, trues, preds_map):
-        """绘制所有模型的预测曲线以及学生的实际作答情况"""
+    def refresh_plot(self):
+        """根据当前数据和复选框状态重绘图表"""
+        """根据当前数据和复选框状态重绘图表"""
+        if self.selected_student_id is None:
+            return
+
         self.ax.clear()
-
-        # 1. 绘制真实作答 (散点)
-        # 正确(1)显示为绿色点，错误(0)显示为红色点
-        true_indices = [i for i, val in enumerate(trues) if val == 1]
-        false_indices = [i for i, val in enumerate(trues) if val == 0]
         
-        self.ax.scatter(true_indices, [1]*len(true_indices), color='green', marker='o', s=40, label='True: Correct', zorder=5)
-        self.ax.scatter(false_indices, [0]*len(false_indices), color='red', marker='x', s=40, label='True: Incorrect', zorder=5)
+        # 1. 处理画布尺寸 (横向滚动逻辑)
+        
+        # --- 修改开始：调整视窗大小逻辑 ---
+        
+        # 设定你希望在当前视窗(不滚动)内显示多少个点
+        points_per_view = 30  # <--- 这里改为 30
+        
+        # 设定视窗的基础宽度（英寸），这里保持跟 Figure 初始化时一致
+        default_width_inches = 10 
+        dpi = 100
+        
+        # 计算每个点应该占多少像素：总像素宽度 / 想要显示的点数
+        # 10英寸 * 100dpi = 1000像素。 1000 / 30 ≈ 33.3 像素/点
+        pixels_per_step = (default_width_inches * dpi) / points_per_view
+        
+        points_count = len(self.current_timesteps)
+        
+        # 计算所需的总宽度（英寸）
+        # 逻辑：总点数 * 每点宽度 / DPI
+        # 并使用 max 确保如果点很少，图表至少也有 default_width_inches 那么宽
+        required_width_inches = max(default_width_inches, (points_count * pixels_per_step) / dpi)
+        
+        # --- 修改结束 ---
+        
+        # 设置 Figure 大小
+        self.fig.set_size_inches(required_width_inches, 5) # 高度固定 5
+        self.chart_canvas.draw()
+        
+        # 更新 Tkinter Canvas 的 scrollregion
+        # 需要更新 chart_widget 在 wrapper canvas 中的大小
+        self.plot_canvas_wrapper.itemconfig(self.canvas_window_id, width=required_width_inches*dpi, height=500) # 高度大致估算或自适应
+        self.plot_canvas_wrapper.configure(scrollregion=(0, 0, required_width_inches*dpi, 500))
 
-        # 2. 绘制各模型预测曲线
-        colors = plt.cm.get_cmap('tab10') # 获取一组颜色
+        # 2. 绘制真实作答 (散点) - 始终显示
+        true_indices = [i for i, val in enumerate(self.current_trues) if val == 1]
+        false_indices = [i for i, val in enumerate(self.current_trues) if val == 0]
+        
+        self.ax.scatter(true_indices, [1.02]*len(true_indices), color='green', marker='o', s=40, label='True: Correct', zorder=5, clip_on=False)
+        self.ax.scatter(false_indices, [-0.02]*len(false_indices), color='red', marker='x', s=40, label='True: Incorrect', zorder=5, clip_on=False)
+
+        # 3. 绘制模型曲线 (根据复选框)
+        colors = plt.cm.get_cmap('tab10') 
+        
+        # 预计算真实标签用于 AUC
+        y_true_full = np.array(self.current_trues)
+
         for idx, model in enumerate(self.model_names):
-            preds = preds_map[model]
-            # 处理可能的 nan
+            if not self.model_vars[model].get(): # 如果未勾选，跳过
+                continue
+
+            preds = self.current_preds_map[model]
             safe_preds = [p if pd.notna(p) else 0.5 for p in preds]
-            
             color = colors(idx % 10)
-            self.ax.plot(timesteps, safe_preds, label=f'{model} Pred', 
+            
+            # --- 绘制预测概率曲线 (实线) ---
+            self.ax.plot(self.current_timesteps, safe_preds, label=f'{model} Pred', 
                          color=color, marker='.', markersize=4, linewidth=1.5, alpha=0.8)
 
-        # 3. 图表设置
-        self.ax.set_title(f"Student {student_id}: Full Trajectory Analysis")
-        self.ax.set_xlabel("Time Step (Question Sequence)")
-        self.ax.set_ylabel("Probability / Correctness")
-        self.ax.set_ylim(-0.1, 1.1) 
+            # --- 计算并绘制累计 AUC (虚线) ---
+            cum_auc_list = []
+            for t in range(len(self.current_timesteps)):
+                # 取截止当前时刻的数据 (包含当前时刻)
+                current_sub_true = y_true_full[:t+1]
+                current_sub_pred = safe_preds[:t+1]
+                
+                # 至少要有两个类别才能计算 AUC
+                if len(np.unique(current_sub_true)) < 2:
+                    cum_auc_list.append(np.nan)
+                else:
+                    try:
+                        score = roc_auc_score(current_sub_true, current_sub_pred)
+                        cum_auc_list.append(score)
+                    except:
+                        cum_auc_list.append(np.nan)
+            
+            self.ax.plot(self.current_timesteps, cum_auc_list, label=f'{model} Cum. AUC',
+                         color=color, linestyle='--', linewidth=1.5, alpha=0.6)
+
+        # 4. 图表修饰
+        self.ax.set_title(f"Student {self.selected_student_id}: Trajectory & Cumulative AUC")
+        self.ax.set_xlabel("Time Step")
+        self.ax.set_ylabel("Probability / AUC")
+        self.ax.set_ylim(-0.1, 1.1)
+        self.ax.set_xlim(-0.5, len(self.current_timesteps) - 0.5) # 紧凑显示
+        self.ax.set_xticks(self.current_timesteps) # 显示每个时间步的刻度
+
+        # 图例放置
+        self.ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(self.model_names)*2 + 2, fontsize='small')
+        self.ax.grid(True, linestyle='--', alpha=0.5)
         
-        # 图例放置在上方，避免遮挡曲线
-        self.ax.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15), ncol=len(self.model_names)+2, fontsize='small')
-        
-        self.ax.grid(True, linestyle='--', alpha=0.6)
-        
-        # 调整布局以适应图例
-        self.fig.subplots_adjust(left=0.08, bottom=0.15, right=0.98, top=0.85)
-        
-        self.plot_canvas.draw()
+        self.fig.tight_layout()
+        # 重新调整边距以适应外部图例
+        self.fig.subplots_adjust(top=0.85, bottom=0.15) 
+
+        self.chart_canvas.draw()
 
     def on_timestep_select(self, event):
-        """
-        点击序列详情的某一行时，在图表上高亮该时间步。
-        （可选功能，这里简单实现画一条竖线）
-        """
+        """点击序列详情高亮"""
         if not self.sequence_table.selection():
             return
         
@@ -410,14 +516,12 @@ class KTAnalysisGUI:
             selected_iid = self.sequence_table.selection()[0]
             clicked_timestep = int(selected_iid)
             
-            # 清除旧的竖线 (如果有)
             for line in self.ax.lines:
                 if line.get_label() == '_highlight_line':
                     line.remove()
             
-            # 绘制新的竖线
-            self.ax.axvline(x=clicked_timestep, color='orange', linestyle='--', alpha=0.8, label='_highlight_line')
-            self.plot_canvas.draw()
+            self.ax.axvline(x=clicked_timestep, color='orange', linestyle='-', alpha=0.5, linewidth=20, label='_highlight_line')
+            self.chart_canvas.draw()
             
         except (ValueError, IndexError):
             pass
