@@ -5,3 +5,10 @@
 /nips_task34
 /peiyou
 /analysis_result
+*.csv
+*.txt
+*.exe
+build/
+old/
+no_window/
+dist/
