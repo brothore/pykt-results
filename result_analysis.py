@@ -139,7 +139,7 @@ def merge_kt_results(file_paths, model_names):
     for name in model_names:
         ordered_cols.extend([col for col in [f'trues_{name}', f'preds_{name}', f'auc_{name}'] if col in result_df])
     
-    final_cols = [col for col in ordered_cols if col in result_df.columngits]
+    final_cols = [col for col in ordered_cols if col in result_df.columns]
     
     return result_df[final_cols]
 # ==================================================================
@@ -153,17 +153,18 @@ if __name__ == "__main__":
     # 1. 在这里手动定义您的文件路径列表
     # (请确保使用正确的路径分隔符，或者在字符串前加 r)
     my_file_paths = [
-        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\qikt_attn_test_window_predictions.txt",
-        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\akt_qid_test_question_window_predictions.txt",
-        # r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\hawkes_qid_test_question_window_predictions.txt",
+        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\nips\nips_akt.txt",
+        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\nips\nips_dkt.txt",
+        r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\nips\nips_qikt.txt",
         # r"F:\ResilioSync\works\KT\sync\docs&works\1116data\pykt-results\data\simplekt_qid_test_question_window_predictions.txt"
         # ... 您可以添加任意多个文件
     ]
     
     # 2. 为每个文件定义一个唯一的模型名称 (将用于DataFrame的列名)
     my_model_names = [
-        "qikt",
         "akt",
+        "dkt",
+        "qikt",
         # "hawkes",
         # "simplekt",
         # ... 确保名称与文件一一对应
