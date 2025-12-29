@@ -7,12 +7,12 @@ from sklearn.metrics import roc_auc_score
 
 # 导入matplotlib相关库
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
 import matplotlib.pyplot as plt
 
 # 优化字体
 plt.rcParams['axes.unicode_minus'] = False
-# plt.rcParams['font.sans-serif'] = ['SimHei'] # 如需中文支持请取消注释
+plt.rcParams['font.sans-serif'] = ['SimHei'] # 建议打开中文支持，否则标题可能是乱码
 
 class KTAnalysisGUI:
     def __init__(self, root):
@@ -43,8 +43,13 @@ class KTAnalysisGUI:
         top_frame = ttk.Frame(self.root, padding=5)
         top_frame.pack(side=tk.TOP, fill=tk.X)
 
-        self.btn_load = ttk.Button(top_frame, text="加载 CSV 分析文件 (Load CSV)", command=self.load_csv)
+        self.btn_load = ttk.Button(top_frame, text="📂 加载 CSV 文件 (Load CSV)", command=self.load_csv)
         self.btn_load.pack(side=tk.LEFT)
+        
+        # --- 【新增】手动打开散点图的按钮 ---
+        self.btn_scatter = ttk.Button(top_frame, text="📊 全局散点分析 (Global Scatter)", command=self.show_global_analysis, state=tk.DISABLED)
+        self.btn_scatter.pack(side=tk.LEFT, padx=10)
+
         self.lbl_file = ttk.Label(top_frame, text="未加载文件")
         self.lbl_file.pack(side=tk.LEFT, padx=10)
 
@@ -162,28 +167,19 @@ class KTAnalysisGUI:
 
     # ================== 核心算法：复杂度指标计算 ==================
     def _calculate_complexity_metrics(self, row, base_model):
-        """
-        计算三个核心指标：
-        1. LZ Complexity (Lempel-Ziv): 序列的可压缩性/规律性
-        2. Switch Rate (SR): 状态反转频率 (0->1 或 1->0)
-        3. Conditional Entropy: 已知前一次作答，下一次作答的不确定性
-        """
         seq = row[f'trues_{base_model}']
         
-        # 异常处理：如果没有数据或长度太短
         if not isinstance(seq, list) or len(seq) < 2:
             return 0, 0.0, 0.0
 
-        # --- 1. Lempel-Ziv Complexity (LZ78 Set-based implementation) ---
-        # 逻辑：从左到右扫描，如果当前子串在之前出现过，就延长子串；没出现过，就记为一个新 pattern
-        s_str = ''.join(map(str, map(int, seq))) # 转为字符串 "10110..."
+        # --- 1. LZ Complexity ---
+        s_str = ''.join(map(str, map(int, seq)))
         seen_patterns = set()
         i = 0
         lz_count = 0
         while i < len(s_str):
             sub = s_str[i]
             j = i + 1
-            # 贪婪匹配：寻找未见过的最短子串
             while sub in seen_patterns and j < len(s_str):
                 sub += s_str[j]
                 j += 1
@@ -191,42 +187,31 @@ class KTAnalysisGUI:
             lz_count += 1
             i = j
         
-        # --- 2. Switch Rate (SR) ---
-        # 计算相邻两次作答不一致的比例
+        # --- 2. Switch Rate ---
         arr = np.array(seq)
         changes = np.sum(arr[:-1] != arr[1:])
         sr = changes / (len(seq) - 1)
 
-        # --- 3. Conditional Entropy H(Y_t | Y_{t-1}) ---
-        # H(Next|Prev) = P(Prev=0)*H(Next|Prev=0) + P(Prev=1)*H(Next|Prev=1)
-        
-        # 构造 (前一个, 后一个) 的配对
+        # --- 3. Conditional Entropy ---
         pairs = list(zip(seq[:-1], seq[1:]))
         n_pairs = len(pairs)
         
         if n_pairs == 0:
             entropy = 0.0
         else:
-            # 统计
             count_prev_0 = seq[:-1].count(0)
             count_prev_1 = seq[:-1].count(1)
             
-            # 转移统计
-            c00 = pairs.count((0, 0)) # 0 -> 0
-            c01 = pairs.count((0, 1)) # 0 -> 1
-            c10 = pairs.count((1, 0)) # 1 -> 0
-            c11 = pairs.count((1, 1)) # 1 -> 1
+            c01 = pairs.count((0, 1))
+            c11 = pairs.count((1, 1))
             
-            # 辅助函数：计算二元熵
             def binary_entropy(p):
                 if p <= 1e-9 or p >= 1 - 1e-9: return 0.0
                 return -p * np.log2(p) - (1-p) * np.log2(1-p)
             
-            # 计算条件概率的熵
             h_given_0 = binary_entropy(c01 / count_prev_0) if count_prev_0 > 0 else 0
             h_given_1 = binary_entropy(c11 / count_prev_1) if count_prev_1 > 0 else 0
             
-            # 加权求和
             p_prev_0 = count_prev_0 / n_pairs
             p_prev_1 = count_prev_1 / n_pairs
             
@@ -254,19 +239,17 @@ class KTAnalysisGUI:
                     self.model_names.append(model_name)
 
             if not self.model_names:
-                raise Exception("未找到 'trues_' 或 'preds_' 领衔的列")
+                raise Exception("未找到 'trues_' 或 'preds_' 列")
             
             base_model = self.model_names[0]
 
-            # 解析字符串列表
             for model in self.model_names:
                 self.df[f'trues_{model}'] = self.df[f'trues_{model}'].apply(self._parse_list_string)
                 self.df[f'preds_{model}'] = self.df[f'preds_{model}'].apply(self._parse_list_string)
         
-            # --- 预计算列 ---
+            # --- 预计算 ---
             self.df['seq_len'] = self.df[f'trues_{base_model}'].apply(len)
             
-            # 计算复杂度指标
             print("正在计算序列复杂度指标 (LZ, SR, Entropy)...")
             complexity_data = self.df.apply(lambda row: self._calculate_complexity_metrics(row, base_model), axis=1)
             
@@ -274,8 +257,6 @@ class KTAnalysisGUI:
             self.df['switch_rate'] = complexity_data.apply(lambda x: x[1])
             self.df['cond_entropy'] = complexity_data.apply(lambda x: x[2])
             
-            # --- 【新增】计算 LZ Ratio (归一化复杂度) ---
-            # 避免除以0，虽然 seq_len 一般>=1
             self.df['lz_ratio'] = self.df.apply(lambda x: x['lz_complexity'] / x['seq_len'] if x['seq_len'] > 0 else 0, axis=1)
 
             auc_cols = [f'auc_{model}' for model in self.model_names]
@@ -289,8 +270,7 @@ class KTAnalysisGUI:
                 except Exception:
                     self.df[delta_col_name] = np.nan 
 
-            # *** 更新表格列定义：加入 lz_ratio ***
-            # 顺序：ID, Len, LZ数值, LZ比率, SR, Entropy, AUCs...
+            # 更新表格列
             self.student_cols = ['student_id', 'seq_len', 'lz_complexity', 'lz_ratio', 'switch_rate', 'cond_entropy'] + auc_cols + delta_auc_cols
             self.student_table.config(columns=self.student_cols)
             
@@ -300,9 +280,8 @@ class KTAnalysisGUI:
 
             for col in self.student_cols:
                 col_name = col
-                # 美化列名显示
                 if col == 'lz_complexity': col_name = 'LZ (Val)'
-                elif col == 'lz_ratio': col_name = 'LZ Rate' # 新增显示的列名
+                elif col == 'lz_ratio': col_name = 'LZ Rate'
                 elif col == 'switch_rate': col_name = 'SR (Switch)'
                 elif col == 'cond_entropy': col_name = 'Entropy (H)'
                 elif col.startswith('delta_'): col_name = f"Δ_{col.replace('delta_', '')}"
@@ -312,11 +291,10 @@ class KTAnalysisGUI:
                 self.student_table.heading(col, text=col_name, 
                                      command=lambda c=col: self.sort_by_column(self.student_table, c))
                 
-                # 设置列宽
                 width = 80
                 if col == 'student_id': width = 60
                 elif col == 'seq_len': width = 50
-                elif col == 'lz_ratio': width = 60 # 新列宽度
+                elif col == 'lz_ratio': width = 60
                 elif col in ['lz_complexity', 'switch_rate', 'cond_entropy']: width = 70 
                 elif col.startswith('auc_'): width = 90
                 self.student_table.column(col, width=width, anchor='center')
@@ -343,13 +321,92 @@ class KTAnalysisGUI:
                 self.model_checkbuttons[model] = cb
 
             self.reset_student_table()
+            
+            self.btn_scatter.config(state=tk.NORMAL)
+            
             print(f"加载成功! 指标计算完毕。")
+
+            # 加载完成后，立即弹出全局分析窗口
+            self.show_global_analysis()
 
         except Exception as e:
             import traceback
             traceback.print_exc()
             messagebox.showerror("加载失败", f"无法解析CSV文件: {e}\n\n请查看控制台输出详情。")
 
+    # ================== 【修改点：支持所有模型弹窗】 ==================
+    def show_global_analysis(self):
+        """弹出新窗口，为每一个模型分别显示 Complexity vs AUC 的散点图"""
+        if self.df is None or not self.model_names:
+            return
+
+        # 遍历所有的模型名称，为每个模型创建一个独立的窗口
+        for i, model_name in enumerate(self.model_names):
+            
+            # 1. 创建新窗口 (Toplevel)
+            analysis_window = tk.Toplevel(self.root)
+            analysis_window.title(f"[{model_name}] 全局实证分析 (Global Analysis: {model_name})")
+            
+            # 错位弹窗：让窗口不要完全重叠，方便查看
+            offset_x = 100 + (i * 30)
+            offset_y = 100 + (i * 30)
+            analysis_window.geometry(f"1400x500+{offset_x}+{offset_y}")
+
+            # 2. 确定当前窗口要画哪个模型的数据
+            y_col = f'auc_{model_name}'
+            
+            # 准备数据，去除 NaN (防止某些模型有空值)
+            plot_df = self.df[['lz_ratio', 'switch_rate', 'cond_entropy', y_col]].dropna()
+
+            # 3. 创建 Matplotlib 图形
+            fig, axes = plt.subplots(1, 3, figsize=(15, 5), dpi=100)
+            
+            metrics = [
+                ('lz_ratio', 'LZ Rate (Compression)', 'blue'),
+                ('switch_rate', 'Switch Rate (Stability)', 'green'),
+                ('cond_entropy', 'Conditional Entropy (Uncertainty)', 'red')
+            ]
+
+            for ax, (metric_col, title_text, color) in zip(axes, metrics):
+                x = plot_df[metric_col]
+                y = plot_df[y_col]
+
+                # 绘制散点
+                ax.scatter(x, y, alpha=0.5, c=color, s=20, edgecolors='white', linewidth=0.5)
+
+                # 计算皮尔逊相关系数
+                if len(x) > 1:
+                    correlation = x.corr(y)
+                    title_full = f"{title_text}\nPearson r = {correlation:.3f}"
+                    
+                    # 绘制趋势线 (线性回归)
+                    try:
+                        z = np.polyfit(x, y, 1)
+                        p = np.poly1d(z)
+                        ax.plot(x, p(x), "k--", linewidth=1.5, alpha=0.7, label='Trend Line')
+                        ax.legend()
+                    except:
+                        pass # 防止数据点太少报错
+                else:
+                    title_full = title_text
+
+                ax.set_title(title_full, fontsize=11, fontweight='bold')
+                ax.set_xlabel(title_text.split('(')[0].strip())
+                ax.set_ylabel(f"AUC ({model_name})") # Y轴标签动态显示模型名
+                ax.grid(True, linestyle=':', alpha=0.6)
+
+            fig.suptitle(f"Model Performance ({model_name}) vs Sequence Complexity Metrics", fontsize=14)
+            fig.tight_layout()
+
+            # 4. 将图形嵌入到新窗口
+            canvas = FigureCanvasTkAgg(fig, master=analysis_window)
+            canvas.draw()
+            canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+
+            # 添加 Matplotlib 工具栏
+            toolbar = NavigationToolbar2Tk(canvas, analysis_window)
+            toolbar.update()
+            canvas.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=True)
 
     def _parse_list_string(self, s):
         if not isinstance(s, str):
@@ -372,20 +429,14 @@ class KTAnalysisGUI:
         delta_auc_cols = [f'delta_{model}' for model in self.model_names[1:]]
 
         for _, row in df_to_render.iterrows():
-            # 格式化 AUC
             auc_values = [f"{row[col]:.4f}" if pd.notna(row[col]) else 'N/A' for col in auc_cols]
             delta_auc_values = [f"{row[col]:+.4f}" if pd.notna(row[col]) else 'N/A' for col in delta_auc_cols]
             
-            # 格式化新指标
             lz = int(row['lz_complexity']) if pd.notna(row['lz_complexity']) else 0
-            
-            # --- 【新增】格式化 LZ Ratio ---
             lz_ratio_str = f"{row['lz_ratio']:.3f}" if pd.notna(row['lz_ratio']) else '0.000'
-            
             sr = f"{row['switch_rate']:.3f}" if pd.notna(row['switch_rate']) else '0.000'
             ent = f"{row['cond_entropy']:.3f}" if pd.notna(row['cond_entropy']) else '0.000'
 
-            # 组合数据：ID, Len, LZ数值, 【LZ比率】, SR, Ent, AUCs...
             values = [row['student_id'], row['seq_len'], lz, lz_ratio_str, sr, ent] + auc_values + delta_auc_values
             self.student_table.insert('', tk.END, values=values)
 
@@ -430,13 +481,11 @@ class KTAnalysisGUI:
         else:
             reverse = False
         
-        # 针对不同列设置默认值（防止None导致排序报错）
         default_val = float('-inf')
         
         l = []
         for k in tree.get_children(''):
             val_str = tree.set(k, col)
-            # 处理 N/A 或空值
             if val_str == 'N/A' or val_str == '':
                 val = default_val
             else:
@@ -455,7 +504,6 @@ class KTAnalysisGUI:
         self.last_sort_col = col
         self.last_sort_reverse = reverse
 
-    # ================== 交互逻辑 (保持不变) ==================
     def on_student_select(self, event):
         if not self.student_table.selection(): return
         selected_item = self.student_table.selection()[0]
